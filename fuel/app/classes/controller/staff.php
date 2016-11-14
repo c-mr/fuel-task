@@ -5,6 +5,9 @@ class Controller_Staff extends Controller_Template
 
     private $staffs = ['staff_no', 'name', 'department', 'gender'];
 
+    /**
+     * INDEX画面(一覧)
+     */
     public function action_index()
     {
         $data["subnav"] = array('index'=> 'active' );
@@ -16,19 +19,21 @@ class Controller_Staff extends Controller_Template
         $data["gender_arr"] = Config::get('staff_master.gender');
 
         // ページネーション
-
-        $total = DB::select(DB::expr('COUNT(*) as cnt'))->from('staffs')->execute()->as_array();
+        $result = DB::select('*')
+                ->from('staffs')
+                ->execute();
+        $total = count($result);
         // Debug::dump($total);
 
         $config = array(
             // 'pagination_url' => 'staff/index/',
-            'total_items'    => $total[0]['cnt'],
-            'uri_segment' => 'p',
-            'num_links' => 4,
-            'per_page' => 7,
-            'name' => 'pagination',
-            'show_first' => true,
-            'show_last' => true,
+            'total_items'   => $total,
+            'uri_segment'   => 'p',
+            'num_links'     => 4,
+            'per_page'      => 7,
+            'name'          => 'pagination',
+            'show_first'    => true,
+            'show_last'     => true,
         );
         $pagination = Pagination::forge('pagination', $config);
 
@@ -129,13 +134,44 @@ class Controller_Staff extends Controller_Template
             ]
         );
 
-        $new->save();
-        Response::redirect('staff/index');
+        // トランザクション
+        try {
+            DB::start_transaction();
+
+            $new->save();
+
+            DB::commit_transaction();
+
+            Response::redirect('staff');
+        } catch (\Exception $e) {
+            DB::rollback_transaction();
+
+            throw $e;
+        }
+
     }
 
-    public function action_edit()
+    public function action_detail($id)
+    {
+        $data["subnav"] = array('detail'=> 'active' );
+        $this->template->title = 'Staff &raquo; Detail';
+
+        $data["title"] = "Staff Detail";
+
+        $data['staff'] = DB::select()
+                        ->where('id', $id)
+                        ->from('staffs')
+                        ->execute();
+
+        Debug::dump($data);
+
+        $this->template->content = View::forge('staff/detail', $data);
+    }
+
+    public function action_edit($id)
     {
         $data["subnav"] = array('edit'=> 'active' );
+
         $this->template->title = 'Staff &raquo; Edit';
         $this->template->content = View::forge('staff/edit', $data);
     }
