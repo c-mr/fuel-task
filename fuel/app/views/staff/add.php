@@ -1,7 +1,7 @@
 <nav class="navbar navbar-default">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">Staff List</a>
+            <a class="navbar-brand" href="./">Staff List</a>
         </div>
 
         <div class="collapse navbar-collapse" id="navbarEexample1">
@@ -44,7 +44,7 @@
         <div class="form-group">
             <?php echo Form::label('Department', 'department', ['class' => 'col-sm-4 control-label']); ?>
             <div class="col-sm-8">
-            <?php echo Form::select('department', Session::get_flash('department'), ['' => 'Select']+$department,['class' => 'form-control']);?>
+            <?php echo Form::select('department', Session::get_flash('department'), ['' => 'Select']+$department_arr,['class' => 'form-control']);?>
 
             <?php if($val->error('department')):?>
                 <p class="alert alert-warning"><?php echo $val->error('department');?></p>
@@ -55,7 +55,7 @@
         <div class="form-group">
             <?php echo Form::label('Gender', 'gender', ['class' => 'col-sm-4 control-label']); ?>
             <div class="col-sm-8">
-                <?php foreach ($gender as $key => $value) { ?>
+                <?php foreach ($gender_arr as $key => $value) { ?>
                     <?php echo Form::label($value.Form::radio('gender', $key, Session::get_flash('gender'), ['id' => 'form_gender'.$key]), 'gender'.$key, ['class' => 'radio-inline']); ?>
                 <?php }; ?>
 

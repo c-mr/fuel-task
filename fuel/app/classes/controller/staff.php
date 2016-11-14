@@ -9,6 +9,39 @@ class Controller_Staff extends Controller_Template
     {
         $data["subnav"] = array('index'=> 'active' );
         $this->template->title = 'Staff &raquo; Index';
+
+        // 定義呼出
+        Config::load('staff_master', true);
+        $data["department_arr"] = Config::get('staff_master.department');
+        $data["gender_arr"] = Config::get('staff_master.gender');
+
+        // ページネーション
+
+        $total = DB::select(DB::expr('COUNT(*) as cnt'))->from('staffs')->execute()->as_array();
+        // Debug::dump($total);
+
+        $config = array(
+            // 'pagination_url' => 'staff/index/',
+            'total_items'    => $total[0]['cnt'],
+            'uri_segment' => 'p',
+            'num_links' => 4,
+            'per_page' => 7,
+            'name' => 'pagination',
+            'show_first' => true,
+            'show_last' => true,
+        );
+        $pagination = Pagination::forge('pagination', $config);
+
+        $data['staffs'] = DB::select()
+                        ->limit($pagination->per_page)
+                        ->offset($pagination->offset)
+                        ->from('staffs')
+                        ->order_by('id', 'desc')
+                        ->execute();
+
+        $data['pagination'] = $pagination;
+
+        // Debug::dump($pagination);
         $this->template->content = View::forge('staff/index', $data);
     }
 
@@ -51,8 +84,8 @@ class Controller_Staff extends Controller_Template
 
         // 定義呼出
         Config::load('staff_master', true);
-        $data["department"] = Config::get('staff_master.department');
-        $data["gender"] = Config::get('staff_master.gender');
+        $data["department_arr"] = Config::get('staff_master.department');
+        $data["gender_arr"] = Config::get('staff_master.gender');
 
 
         $this->template->content = View::forge('staff/add', $data);

@@ -1,13 +1,34 @@
-<ul class="nav nav-pills">
-    <li class='<?php echo Arr::get($subnav, "index" ); ?>'><?php echo Html::anchor('staff/index','Index');?></li>
-    <li class='<?php echo Arr::get($subnav, "detail" ); ?>'><?php echo Html::anchor('staff/detail','Detail');?></li>
-    <li class='<?php echo Arr::get($subnav, "create" ); ?>'><?php echo Html::anchor('staff/create','Create');?></li>
-    <li class='<?php echo Arr::get($subnav, "add" ); ?>'><?php echo Html::anchor('staff/add','Add');?></li>
-    <li class='<?php echo Arr::get($subnav, "edit" ); ?>'><?php echo Html::anchor('staff/edit','Edit');?></li>
-    <li class='<?php echo Arr::get($subnav, "update" ); ?>'><?php echo Html::anchor('staff/update','Update');?></li>
-    <li class='<?php echo Arr::get($subnav, "destory" ); ?>'><?php echo Html::anchor('staff/destory','Destory');?></li>
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="./">Staff List</a>
+        </div>
+    </div>
+</nav>
 
-</ul>
-<p>Index</p>
+<table class="table">
+    <thead>
+        <tr><th>社員番号</th><th>名前</th><th>部署</th><th>性別</th><th>&nbsp</th></tr>
+    </thead>
+    <tbody>
+<?php
+foreach ($staffs as $staff) {
+?>
+        <tr>
+            <td><?= $staff["staff_no"] ?></td>
+            <td><?= $staff["name"] ?></td>
+            <td><?= $department_arr[$staff["department"]]; ?></td>
+            <td><?= $gender_arr[$staff["gender"]]; ?></td>
+            <td></td>
+        </tr>
+<?php
+}
+?>
+    </tbody>
+</table>
+
+<?php echo Pagination::instance('pagination')->render(); ?>
+
+
 
 <div><a class="btn btn-primary" href="./add">New Entry</a></div>
