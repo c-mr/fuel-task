@@ -50,13 +50,6 @@ class Controller_Staff extends Controller_Template
         $this->template->content = View::forge('staff/index', $data);
     }
 
-    public function action_detail()
-    {
-        $data["subnav"] = array('detail'=> 'active' );
-        $this->template->title = 'Staff &raquo; Detail';
-        $this->template->content = View::forge('staff/detail', $data);
-    }
-
     /**
      * 新規登録
      */
@@ -125,6 +118,7 @@ class Controller_Staff extends Controller_Template
      */
     public function action_insert()
     {
+
         $new = Model_Staff::forge(
             [
                 'staff_no'      => Input::post('staff_no'),
@@ -151,24 +145,30 @@ class Controller_Staff extends Controller_Template
 
     }
 
-    public function action_detail($id)
+    public function action_detail($id = null)
     {
         $data["subnav"] = array('detail'=> 'active' );
         $this->template->title = 'Staff &raquo; Detail';
 
         $data["title"] = "Staff Detail";
 
+        // 定義呼出
+        Config::load('staff_master', true);
+        $data["department_arr"] = Config::get('staff_master.department');
+        $data["gender_arr"] = Config::get('staff_master.gender');
+
         $data['staff'] = DB::select()
                         ->where('id', $id)
                         ->from('staffs')
-                        ->execute();
+                        ->execute()
+                        ->current();
 
-        Debug::dump($data);
+        // Debug::dump($data);
 
         $this->template->content = View::forge('staff/detail', $data);
     }
 
-    public function action_edit($id)
+    public function action_edit($id = null)
     {
         $data["subnav"] = array('edit'=> 'active' );
 
