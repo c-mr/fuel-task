@@ -19,7 +19,7 @@ foreach ($staffs as $staff) {
             <td><?= $staff["name"] ?></td>
             <td><?= $department_arr[$staff["department"]]; ?></td>
             <td><?= $gender_arr[$staff["gender"]]; ?></td>
-            <td></td>
+            <td><?php echo Html::anchor('staff/detail/'.$staff["id"],'Detail');?></td>
         </tr>
 <?php
 }
@@ -30,5 +30,4 @@ foreach ($staffs as $staff) {
 <?php echo Pagination::instance('pagination')->render(); ?>
 
 
-
-<div><a class="btn btn-primary" href="./add">New Entry</a></div>
+<div class="row"><?php echo Html::anchor('./staff/add','New Entry', ['class' => 'btn btn-primary']);?></div>
