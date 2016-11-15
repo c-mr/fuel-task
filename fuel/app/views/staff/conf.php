@@ -40,8 +40,9 @@
           <div class="form-group">
             <div class="col-sm-offset-4 col-sm-8">
             <?php echo Form::hidden(Config::get('security.csrf_token_key'), Security::fetch_token()); ?>
+                <?php echo Form::hidden('act', $act); ?>
 
-            <?php echo Form::submit('insert', 'Send', ['class' => 'btn btn-success']); ?>&nbsp;&nbsp;
+            <?php echo Form::submit('act', 'Send', ['class' => 'btn btn-success']); ?>&nbsp;&nbsp;
             <?php echo Form::submit('back', 'Back', ['class' => 'btn btn-default']); ?>
             </div>
           </div>

@@ -1,11 +1,3 @@
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="./">Staff List</a>
-        </div>
-    </div>
-</nav>
-
 <table class="table">
     <thead>
         <tr><th>社員番号</th><th>名前</th><th>部署</th><th>性別</th><th>&nbsp</th></tr>

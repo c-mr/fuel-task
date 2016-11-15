@@ -14,31 +14,31 @@ class Model_Staff extends \Orm\Model
         'updated_at',
     ];
 
-    protected static $_observers = array(
-        'Orm\Observer_CreatedAt' => array(
-            'events' => array('before_insert'),
+    protected static $_observers = [
+        'Orm\Observer_CreatedAt' => [
+            'events' => ['before_insert'],
             'mysql_timestamp' => false,
-        ),
-        'Orm\Observer_UpdatedAt' => array(
-            'events' => array('before_update'),
+        ],
+        'Orm\Observer_UpdatedAt' => [
+            'events' => ['before_update'],
             'mysql_timestamp' => false,
-        ),
-    );
+        ],
+    ];
 
     protected static $_table_name = 'staffs';
 
     //バリデーション
-    public static function validate($factory)
+    public static function validate($factory, $id = null)
     {
         $val = Validation::forge($factory);
         // 追加validation呼出
         $val->add_callable('AddValidation');
         $val->add('staff_no', 'Staff No')
-                    ->add_rule('required')
-                    ->add_rule('unique', 'staffs.staff_no')
-                    ->add_rule('exact_length', 7);
+            ->add_rule('required')
+            ->add_rule('unique', 'staffs.staff_no', $id)
+            ->add_rule('exact_length', 7);
         $val->add('name', 'Name')->add_rule('required')
-                    ->add_rule('max_length', 200);
+            ->add_rule('max_length', 200);
         $val->add('department', 'Department')->add_rule('required');
         $val->add('gender', 'Gender')->add_rule('required');
         return $val;
