@@ -31,8 +31,11 @@ class Model_Staff extends \Orm\Model
     public static function validate($factory)
     {
         $val = Validation::forge($factory);
+        // 追加validation呼出
+        $val->add_callable('AddValidation');
         $val->add('staff_no', 'Staff No')
                     ->add_rule('required')
+                    ->add_rule('unique', 'staffs.staff_no')
                     ->add_rule('exact_length', 7);
         $val->add('name', 'Name')->add_rule('required')
                     ->add_rule('max_length', 200);
