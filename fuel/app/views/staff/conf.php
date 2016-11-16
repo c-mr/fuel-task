@@ -8,7 +8,7 @@
         <div class="form-group">
             <?php echo Form::label('Staff No', 'staff_no', ['class' => 'col-sm-4 control-label']); ?>
             <div class="col-sm-8">
-                <?= $staff_no; ?>
+                <?= sprintf('%07d', $staff_no); ?>
                 <?php echo Form::hidden('staff_no', $staff_no); ?>
             </div>
         </div>

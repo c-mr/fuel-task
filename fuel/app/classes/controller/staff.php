@@ -18,35 +18,12 @@ class Controller_Staff extends Controller_Template
         $data['department_arr'] = Config::get('staff_master.department');
         $data['gender_arr'] = Config::get('staff_master.gender');
 
-        // ページネーション
-        $result = DB::select('*')
-                ->from('staffs')
-                ->execute();
-        $total = count($result);
-        // Debug::dump($total);
 
-        $config = array(
-            // 'pagination_url' => 'staff/index/',
-            'total_items'   => $total,
-            'uri_segment'   => 'p',
-            'num_links'     => 4,
-            'per_page'      => 7,
-            'name'          => 'pagination',
-            'show_first'    => true,
-            'show_last'     => true,
-        );
-        $pagination = Pagination::forge('pagination', $config);
-
-        $data['staffs'] = DB::select()
-                        ->limit($pagination->per_page)
-                        ->offset($pagination->offset)
-                        ->from('staffs')
-                        ->order_by('id', 'desc')
-                        ->execute();
-
+        $pagination = Model_Staff::staff_list_pagination();
         $data['pagination'] = $pagination;
 
-        // Debug::dump($pagination);
+        $data['staffs'] = Model_Staff::staff_list_query($pagination->per_page, $pagination->offset);
+
         $this->template->content = View::forge('staff/index', $data);
     }
 
@@ -162,11 +139,7 @@ class Controller_Staff extends Controller_Template
         $data['department_arr'] = Config::get('staff_master.department');
         $data['gender_arr'] = Config::get('staff_master.gender');
 
-        $data['staff'] = DB::select()
-                        ->where('id', $id)
-                        ->from('staffs')
-                        ->execute()
-                        ->current();
+        $data['staff'] = Model_Staff::staff_detail_query($id);
 
         $this->template->content = View::forge('staff/detail', $data);
     }
@@ -182,11 +155,7 @@ class Controller_Staff extends Controller_Template
         $data['department_arr'] = Config::get('staff_master.department');
         $data['gender_arr'] = Config::get('staff_master.gender');
 
-        $data['staff'] = DB::select()
-                        ->where('id', $id)
-                        ->from('staffs')
-                        ->execute()
-                        ->current();
+        $data['staff'] = Model_Staff::staff_detail_query($id);
 
         // 入力チェック呼出
         $val = Model_Staff::validate('add', $id);
@@ -214,7 +183,7 @@ class Controller_Staff extends Controller_Template
         $this->template->content = View::forge('staff/_form', $data);
     }
 
-    public function action_update()
+    public function action_update($id = null)
     {
         $data["subnav"] = array('update'=> 'active' );
         $this->template->title = 'Staff &raquo; Update';
@@ -223,7 +192,7 @@ class Controller_Staff extends Controller_Template
 
     public function action_destory()
     {
-        $data["subnav"] = array('destory'=> 'active' );
+        $data['subnav'] = array('destory'=> 'active' );
         $this->template->title = 'Staff &raquo; Destory';
         $this->template->content = View::forge('staff/destory', $data);
     }

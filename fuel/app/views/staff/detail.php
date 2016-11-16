@@ -6,7 +6,7 @@
 
         <div class="row">
             <div class="col-sm-2"><?php echo Form::label('Staff No', 'staff_no', ['class' => 'control-label']); ?></div>
-            <div class="col-sm-10"><?= $staff['staff_no'] ?></div>
+            <div class="col-sm-10"><?= sprintf('%07d', $staff['staff_no']) ?></div>
         </div>
 
         <div class="row">

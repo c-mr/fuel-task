@@ -8,7 +8,7 @@
         <div class="form-group">
             <div class="col-sm-2"><?php echo Form::label('Staff No', 'staff_no', ['class' => 'control-label']); ?></div>
             <div class="col-sm-10">
-                <?php echo Form::input('staff_no', Input::post('staff_no', isset($staff) ? $staff['staff_no'] : '') , ['class' => 'form-control', 'placeholder'=>'Staff No']); ?>
+                <?php echo Form::input('staff_no', Input::post('staff_no', isset($staff) ? sprintf('%07d', $staff['staff_no']) : '') , ['class' => 'form-control', 'placeholder'=>'Staff No']); ?>
                 <?php if($val->error('staff_no')):?>
                     <p class="alert alert-warning"><?php echo $val->error('staff_no'); ?></p>
                 <?php endif; ?>

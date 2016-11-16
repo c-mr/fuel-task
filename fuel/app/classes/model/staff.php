@@ -3,7 +3,6 @@
 class Model_Staff extends \Orm\Model
 {
     protected static $_properties = [
-
         'id',
         'staff_no',
         'name',
@@ -37,10 +36,65 @@ class Model_Staff extends \Orm\Model
             ->add_rule('required')
             ->add_rule('unique', 'staffs.staff_no', $id)
             ->add_rule('exact_length', 7);
-        $val->add('name', 'Name')->add_rule('required')
+        $val->add('name', 'Name')
+            ->add_rule('required')
             ->add_rule('max_length', 200);
-        $val->add('department', 'Department')->add_rule('required');
-        $val->add('gender', 'Gender')->add_rule('required');
+        $val->add('department', 'Department')
+            ->add_rule('required');
+        $val->add('gender', 'Gender')
+            ->add_rule('required');
         return $val;
+    }
+
+    /**
+     * スタッフリストページャー
+     * @return Object　ページャーのコンフィグやテンプレートなど
+     */
+    public static function staff_list_pagination()
+    {
+        // ページネーション
+        $sql = DB::query('SELECT count(*) AS count FROM `staffs`');
+
+
+        $result= $sql->execute()->current();
+
+        $total = $result['count'];
+
+        $config = array(
+            // 'pagination_url' => 'staff/index/',
+            'total_items'   => $total,
+            'uri_segment'   => 'p',
+            'num_links'     => 4,
+            'per_page'      => 7,
+            'name'          => 'pagination',
+            'show_first'    => true,
+            'show_last'     => true,
+        );
+
+        return Pagination::forge('pagination', $config);
+    }
+
+    /**
+     * スタッフリストSQL
+     * @param  int $limit  per_page
+     * @param  int $offset limit
+     * @return Object      SQL結果
+     */
+    public static function staff_list_query($limit , $offset)
+    {
+
+        $sql = DB::query(sprintf('SELECT * FROM `staffs` ORDER BY `id` DESC LIMIT %d OFFSET %d', $limit , $offset));
+
+
+        return $sql->execute();
+    }
+
+    public static function staff_detail_query($id)
+    {
+
+        $sql = DB::query(sprintf('SELECT * FROM `staffs` WHERE `id` = %d', $id));
+
+
+        return $sql->execute()->current();
     }
 }

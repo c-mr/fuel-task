@@ -7,11 +7,11 @@
 foreach ($staffs as $staff) {
 ?>
         <tr>
-            <td><?= $staff["staff_no"] ?></td>
-            <td><?= $staff["name"] ?></td>
-            <td><?= $department_arr[$staff["department"]]; ?></td>
-            <td><?= $gender_arr[$staff["gender"]]; ?></td>
-            <td><?php echo Html::anchor('staff/detail/'.$staff["id"],'Detail');?></td>
+            <td><?= sprintf('%07d', $staff['staff_no']) ?></td>
+            <td><?= $staff['name'] ?></td>
+            <td><?= $department_arr[$staff['department']]; ?></td>
+            <td><?= $gender_arr[$staff['gender']]; ?></td>
+            <td><?php echo Html::anchor('staff/detail/'.$staff['id'],'Detail');?></td>
         </tr>
 <?php
 }
