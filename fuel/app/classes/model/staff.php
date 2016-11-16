@@ -47,8 +47,8 @@ class Model_Staff extends \Orm\Model
     }
 
     /**
-     * スタッフリストページャー
-     * @return Object　ページャーのコンフィグやテンプレートなど
+     * スタッフリストページネーション
+     * @return Object　ページネーションのコンフィグやテンプレートなど
      */
     public static function staff_list_pagination()
     {
