@@ -16,11 +16,11 @@ class Model_Staff extends \Orm\Model
     protected static $_observers = [
         'Orm\Observer_CreatedAt' => [
             'events' => ['before_insert'],
-            'mysql_timestamp' => false,
+            'mysql_timestamp' => true,
         ],
         'Orm\Observer_UpdatedAt' => [
             'events' => ['before_update'],
-            'mysql_timestamp' => false,
+            'mysql_timestamp' => true,
         ],
     ];
 
