@@ -14,11 +14,11 @@
 			<nav class="navbar navbar-default">
 				<div class="container-fluid">
 					<div class="navbar-header">
-						<?php echo Html::anchor('./staff','Staff List', ['class' => 'navbar-brand']);?>
+						<?php echo Html::anchor('staff','Staff List', ['class' => 'navbar-brand']);?>
 					</div>
 				</div>
 			</nav>
-<?php echo $content; ?>
+			<?php echo $content; ?>
 		</div>
 		<footer>
 		</footer>

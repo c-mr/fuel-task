@@ -1,60 +1,55 @@
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h5 class="panel-title"><?= $title ?></h5>
+<div class="form-group">
+    <div class="col-sm-2">
+        <label class="control-label" for="form_staff_no">Staff No</label>
     </div>
-    <div class="panel-body">
-        <?php echo Form::open(['class' => 'form-horizontal']); ?>
-
-        <div class="form-group">
-            <div class="col-sm-2"><?php echo Form::label('Staff No', 'staff_no', ['class' => 'control-label']); ?></div>
-            <div class="col-sm-10">
-                <?php echo Form::input('staff_no', Input::post('staff_no', isset($staff) ? sprintf('%07d', $staff['staff_no']) : '') , ['class' => 'form-control', 'placeholder'=>'Staff No']); ?>
-                <?php if($val->error('staff_no')):?>
-                    <p class="alert alert-warning"><?php echo $val->error('staff_no'); ?></p>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-sm-2"><?php echo Form::label('Name', 'name', ['class' => 'control-label']); ?></div>
-            <div class="col-sm-10">
-                <?php echo Form::input('name', Input::post('name', isset($staff) ? $staff['name'] : ''), ['class' => 'form-control', 'placeholder'=>'Name']); ?>
-                <?php if($val->error('name')):?>
-                    <p class="alert alert-warning"><?php echo $val->error('name'); ?></p>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-sm-2"><?php echo Form::label('Department', 'department', ['class' => 'control-label']); ?></div>
-            <div class="col-sm-10">
-                <?php echo Form::select('department', Input::post('department', isset($staff) ? $staff['department'] : ''), ['' => 'Select']+$department_arr, ['class' => 'form-control', 'placeholder'=>'Department']); ?>
-                <?php if($val->error('department')):?>
-                    <p class="alert alert-warning"><?php echo $val->error('department'); ?></p>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-sm-2"><?php echo Form::label('Gender', 'gender', ['class' => 'control-label']); ?></div>
-            <div class="col-sm-10">
-                <?php foreach ($gender_arr as $key => $value) { ?>
-                    <?php echo Form::label($value.Form::radio('gender', $key, Input::post('gender', isset($staff) ? $staff['gender'] : ''), ['id' => 'form_gender'.$key]), 'gender'.$key, ['class' => 'radio-inline']); ?>
-                <?php }; ?>
-                <?php if($val->error('gender')):?>
-                    <p class="alert alert-warning"><?php echo $val->error('gender'); ?></p>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-sm-offset-4 col-sm-8">
-            <?php echo Form::hidden('act', $act); ?>
-            <?php echo Form::hidden(Config::get('security.csrf_token_key'), Security::fetch_token()); ?>
-            <?php echo Form::submit('submit', 'Send', ['class' => 'btn btn-success']); ?>
-            </div>
-        </div>
-
-        <?php echo Form::close(); ?>
+    <div class="col-sm-10">
+        <input class="form-control" placeholder="Staff No" name="staff_no" value="<?= Input::post('staff_no', isset($staff) ? $staff['staff_no'] : '') ?>" type="text" id="form_staff_no" /> </div>
+        <?php if($val->error('staff_no')):?>
+            <p class="alert alert-warning"><?php echo $val->error('staff_no'); ?></p>
+        <?php endif; ?>
+</div>
+<div class="form-group">
+    <div class="col-sm-2">
+        <label class="control-label" for="form_name">Name</label>
     </div>
+    <div class="col-sm-10">
+        <input class="form-control" placeholder="Name" name="name" value="<?= Input::post('name', isset($staff) ? $staff['name'] : '') ?>" type="text" id="form_name" /> </div>
+        <?php if($val->error('name')):?>
+            <p class="alert alert-warning"><?php echo $val->error('name'); ?></p>
+        <?php endif; ?>
+</div>
+<div class="form-group">
+    <div class="col-sm-2">
+        <label class="control-label" for="form_department">Department</label>
+    </div>
+    <div class="col-sm-10">
+        <select class="form-control" name="department" id="form_department">
+            <option value="">Select</option>
+            <?php foreach ($department_arr as $key => $value):?>
+            <option value="<?= $key ?>" <?= Input::post('department', isset($staff) ? ($staff['department'] == $key ? ' selected="selected"' : '') : '') ?>><?= $value ?></option>
+            <?php endforeach; ?>
+        </select>
+        <?php if($val->error('department')):?>
+            <p class="alert alert-warning"><?php echo $val->error('department'); ?></p>
+        <?php endif; ?>
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-sm-2">
+        <label class="control-label" for="form_gender">Gender</label>
+    </div>
+    <div class="col-sm-10">
+        <?php foreach ($gender_arr as $key => $value):?>
+        <label class="radio-inline" for="form_gender_<?= $key ?>"><?= $value ?>
+            <input id="form_gender_<?= $key ?>" name="gender" value="<?= $key ?>" type="radio" <?= Input::post('gender', isset($staff) ? ($staff['gender'] == $key ? ' checked="checked"' : '') : '') ?> />
+        </label>
+        <?php endforeach; ?>
+        <?php if($val->error('gender')):?>
+            <p class="alert alert-warning"><?php echo $val->error('gender'); ?></p>
+        <?php endif; ?>
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-sm-offset-4 col-sm-8">
+        <input class="btn btn-success" name="submit" value="Send" type="submit" id="form_submit" /> </div>
 </div>

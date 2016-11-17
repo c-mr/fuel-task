@@ -5,22 +5,22 @@
     <div class="panel-body">
 
         <div class="row">
-            <div class="col-sm-2"><?php echo Form::label('Staff No', 'staff_no', ['class' => 'control-label']); ?></div>
+            <div class="col-sm-2"><label class="control-label" for="form_staff_no">Staff No</label></div>
             <div class="col-sm-10"><?= sprintf('%07d', $staff['staff_no']) ?></div>
         </div>
 
         <div class="row">
-            <div class="col-sm-2"><?php echo Form::label('Name', 'name', ['class' => 'control-label']); ?></div>
+            <div class="col-sm-2"><label class="control-label" for="form_staff_no">Name</label></div>
             <div class="col-sm-10"><?= $staff['name'] ?></div>
         </div>
 
         <div class="row">
-            <div class="col-sm-2"><?php echo Form::label('Department', 'department', ['class' => 'control-label']); ?></div>
+            <div class="col-sm-2"><label class="control-label" for="form_staff_no">Department</label></div>
             <div class="col-sm-10"><?= $department_arr[$staff['department']] ?></div>
         </div>
 
         <div class="row">
-            <div class="col-sm-2"> <?php echo Form::label('Gender', 'gender', ['class' => 'control-label']); ?></div>
+            <div class="col-sm-2"><label class="control-label" for="form_staff_no">Gender</label></div>
             <div class="col-sm-10"><?= $gender_arr[$staff['gender']] ?></div>
         </div>
 

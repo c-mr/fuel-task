@@ -97,4 +97,34 @@ class Model_Staff extends \Orm\Model
 
         return $sql->execute()->current();
     }
+
+
+    public static function staff_insert_query($val)
+    {
+        $sql = DB::query(sprintf(
+            'INSERT INTO `staffs` (`staff_no`, `name`, `department`, `gender`, `created_at`)'
+             .' VALUES (\'%d\', \'%s\', \'%d\', \'%d\', now())'
+            , $val['staff_no']
+            , $val['name']
+            , $val['department']
+            , $val['gender']));
+
+        return $sql->execute();
+    }
+
+
+    public static function staff_update_query($id, $val)
+    {
+
+        $sql = DB::query(sprintf(
+            'UPDATE `staffs` SET `staff_no` = \'%d\', `name` = \'%s\', `department` = \'%d\', `gender` = \'%d\', updated_at = now() WHERE `id` = \'%d\''
+            , $val['staff_no']
+            , $val['name']
+            , $val['department']
+            , $val['gender']
+            , $id));
+
+        return $sql->execute();
+    }
+
 }

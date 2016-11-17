@@ -37,11 +37,16 @@ class Controller_Staff extends Controller_Template
 
         // タイトル
         $data['title'] = "Staff Add";
-        $data['act'] = "insert";
 
+        // _form.php(共通化した部分)に送る
+        $view = \View::forge('staff/_form');
+        // 定義呼出
+        Config::load('staff_master', true);
+        $view->set_global('department_arr', Config::get('staff_master.department'));
+        $view->set_global('gender_arr', Config::get('staff_master.gender'));
         // 入力チェック呼出
         $val = Model_Staff::validate('add');
-        $data['val'] = $val;
+        $view->set_global('val', $val);
 
         // POSTされた各データをフラッシュセッションに保存
         if (Input::method() == 'POST') {
@@ -60,13 +65,7 @@ class Controller_Staff extends Controller_Template
 
         }
 
-        // 定義呼出
-        Config::load('staff_master', true);
-        $data['department_arr'] = Config::get('staff_master.department');
-        $data['gender_arr'] = Config::get('staff_master.gender');
-
-
-        $this->template->content = View::forge('staff/_form', $data);
+        $this->template->content = View::forge('staff/add', $data);
     }
 
     /**
@@ -93,28 +92,25 @@ class Controller_Staff extends Controller_Template
         $data['act'] = Session::get_flash('act');
 
         $this->template->content = View::forge('staff/conf', $data);
-}
+    }
 
     /**
      * DBに保存
      */
     public function action_insert()
     {
-
-        $new = Model_Staff::forge(
-            [
+        $val = [
                 'staff_no'      => Input::post('staff_no'),
                 'name'          => Input::post('name'),
                 'department'    => Input::post('department'),
                 'gender'        => Input::post('gender')
-            ]
-        );
+            ];
 
         // トランザクション
         try {
             DB::start_transaction();
 
-            $new->save();
+            Model_Staff::staff_insert_query($val);
 
             DB::commit_transaction();
 
@@ -127,6 +123,10 @@ class Controller_Staff extends Controller_Template
 
     }
 
+    /**
+     * 詳細画面
+     * @param  int $id
+     */
     public function action_detail($id = null)
     {
         $data['subnav'] = array('detail'=> 'active' );
@@ -144,23 +144,27 @@ class Controller_Staff extends Controller_Template
         $this->template->content = View::forge('staff/detail', $data);
     }
 
+    /**
+     * 編集画面
+     * @param  [int] $id
+     */
     public function action_edit($id = null)
     {
         $data['subnav'] = array('edit'=> 'active' );
         $data['title'] = "Staff Edit";
-        $data['act'] = "update";
 
+        // _form.php(共通化した部分)に送る
+        $view = \View::forge('staff/_form');
         // 定義呼出
         Config::load('staff_master', true);
-        $data['department_arr'] = Config::get('staff_master.department');
-        $data['gender_arr'] = Config::get('staff_master.gender');
+        $view->set_global('department_arr', Config::get('staff_master.department'));
+        $view->set_global('gender_arr', Config::get('staff_master.gender'));
 
-        $data['staff'] = Model_Staff::staff_detail_query($id);
+        $view->set_global('staff', Model_Staff::staff_detail_query($id));
 
         // 入力チェック呼出
         $val = Model_Staff::validate('add', $id);
-        $data['val'] = $val;
-
+        $view->set_global('val', $val);
 
         // POSTされた各データをフラッシュセッションに保存
         if (Input::method() == 'POST') {
@@ -184,12 +188,12 @@ class Controller_Staff extends Controller_Template
         }
 
         $this->template->title = 'Staff &raquo; Edit';
-        $this->template->content = View::forge('staff/_form', $data);
+        $this->template->content = View::forge('staff/edit', $data);
     }
 
-    public function action_update($id = null)
+    public function action_update()
     {
-        $add = [
+        $val = [
                 'staff_no'      => Input::post('staff_no'),
                 'name'          => Input::post('name'),
                 'department'    => Input::post('department'),
@@ -204,9 +208,7 @@ class Controller_Staff extends Controller_Template
         try {
             DB::start_transaction();
 
-            DB::update('staffs')->set($add)->where('id', $id)->execute();
-            // SqlLog
-            Log::write('ERROR', \DB::last_query());
+            Model_Staff::staff_update_query($id, $val);
 
             DB::commit_transaction();
 
