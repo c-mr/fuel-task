@@ -165,12 +165,16 @@ class Controller_Staff extends Controller_Template
         // POSTされた各データをフラッシュセッションに保存
         if (Input::method() == 'POST') {
             foreach ($this->staffs as $staff) {
-                // セッションにフラッシュ変数をセット
+                // セッションフラッシュに変数をセット
                 Session::set_flash($staff, Input::post($staff));
+                // セッション変数を次のリクエストを維持
+                Session::keep_flash($staff);
             }
 
             // confに渡す際に新規か変更かどっちのアクションか渡す
             Session::set_flash('act', Input::post('act'));
+
+            Session::set('id', $id);
 
             // 入力確認画面へ遷移
             if ($val->run() && Security::check_token()) {
@@ -185,9 +189,33 @@ class Controller_Staff extends Controller_Template
 
     public function action_update($id = null)
     {
-        $data["subnav"] = array('update'=> 'active' );
-        $this->template->title = 'Staff &raquo; Update';
-        $this->template->content = View::forge('staff/update', $data);
+        $add = [
+                'staff_no'      => Input::post('staff_no'),
+                'name'          => Input::post('name'),
+                'department'    => Input::post('department'),
+                'gender'        => Input::post('gender')
+            ];
+
+
+            $id = Session::get('id');
+            Session::delete('id');
+
+        // トランザクション
+        try {
+            DB::start_transaction();
+
+            DB::update('staffs')->set($add)->where('id', $id)->execute();
+            // SqlLog
+            Log::write('ERROR', \DB::last_query());
+
+            DB::commit_transaction();
+
+            Response::redirect('staff');
+        } catch (\Exception $e) {
+            DB::rollback_transaction();
+
+            throw $e;
+        }
     }
 
     public function action_destory()

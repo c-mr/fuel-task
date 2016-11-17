@@ -3,7 +3,7 @@
         <h5 class="panel-title"><?= $title ?></h5>
     </div>
     <div class="panel-body">
-        <?php echo Form::open(['action'=>'staff/insert','class' => 'form-horizontal']); ?>
+        <?php echo Form::open(['action'=>'staff/'.$act,'class' => 'form-horizontal']); ?>
 
         <div class="form-group">
             <?php echo Form::label('Staff No', 'staff_no', ['class' => 'col-sm-4 control-label']); ?>
