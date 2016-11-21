@@ -23,12 +23,13 @@
 <div class="form-group">
     <div class="col-sm-2">
         <label class="control-label" for="form_department">Department</label>
+
     </div>
     <div class="col-sm-10">
         <select class="form-control" name="department" id="form_department">
             <option value="">Select</option>
             <?php foreach ($department_arr as $key => $value):?>
-            <option value="<?= $key ?>" <?= Input::post('department', isset($staff) ? ($staff['department'] == $key ? ' selected="selected"' : '') : '') ?>><?= $value ?></option>
+            <option value="<?= $key ?>"<?= (Input::post('department', isset($staff) ? $staff['department'] : '')) == $key ? ' selected="selected"' : '' ?>><?= $value ?></option>
             <?php endforeach; ?>
         </select>
         <?php if($val->error('department')):?>
@@ -43,7 +44,7 @@
     <div class="col-sm-10">
         <?php foreach ($gender_arr as $key => $value):?>
         <label class="radio-inline" for="form_gender_<?= $key ?>"><?= $value ?>
-            <input id="form_gender_<?= $key ?>" name="gender" value="<?= $key ?>" type="radio" <?= Input::post('gender', isset($staff) ? ($staff['gender'] == $key ? ' checked="checked"' : '') : '') ?> />
+            <input id="form_gender_<?= $key ?>" name="gender" value="<?= $key ?>" type="radio"<?= (Input::post('gender', isset($staff) ? $staff['gender'] : '')) == $key ? ' checked="checked"' : '' ?> />
         </label>
         <?php endforeach; ?>
         <?php if($val->error('gender')):?>
@@ -53,5 +54,6 @@
 </div>
 <div class="form-group">
     <div class="col-sm-offset-4 col-sm-8">
-        <input class="btn btn-success" name="submit" value="Send" type="submit" id="form_submit" /> </div>
+        <input class="btn btn-success" name="submit" value="Send" type="submit" id="form_submit" />
+    </div>
 </div>
