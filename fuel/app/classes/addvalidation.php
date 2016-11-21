@@ -9,21 +9,29 @@ class AddValidation
     public static function _validation_unique($val, $options, $id = null)
     {
         list($table, $field) = explode('.', $options);
-        if(!isset($id)){
-            $result = DB::select(DB::expr("LOWER (\"$field\")"))
-                    ->where($field, '=', Str::lower($val))
-                    ->from($table)->execute();
-        }else{
-            $result = DB::select(DB::expr("LOWER (\"$field\")"))
-                    ->where('id', '<>', $id)
-                    ->where($field, '=', Str::lower($val))
-                    ->from($table)->execute();
+
+        $check_id = "";
+        if(isset($id)){
+            $check_id = ' id <> '.$id.' AND';
         }
+
+        $sql = DB::query(sprintf(
+                'SELECT LOWER(%s) FROM `%s`'
+                .' WHERE%s %s = %s AND deleted_at IS NULL'
+                , $field
+                , $table
+                , $check_id
+                , $field
+                , Str::lower($val)
+            ));
+
+
+        $result = $sql->execute();
 
         // エラーメッセージ
         Validation::active()->set_message('unique', 'The field :label must be unique, but :value has already been used');
 
-        return ! ($result->count() > 0);
+        return !($result->count() > 0);
     }
 
 }
