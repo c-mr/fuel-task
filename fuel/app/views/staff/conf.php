@@ -3,50 +3,58 @@
         <h5 class="panel-title"><?= $title ?></h5>
     </div>
     <div class="panel-body">
-        <?php echo Form::open(['action'=>'staff/'.$act,'class' => 'form-horizontal']); ?>
+        <form action="<?= Uri::create('staff/'.$action) ?>" class="form-horizontal" accept-charset="utf-8" method="post">
 
-        <div class="form-group">
-            <?php echo Form::label('Staff No', 'staff_no', ['class' => 'col-sm-4 control-label']); ?>
-            <div class="col-sm-8">
-                <?= sprintf('%07d', $staff_no); ?>
-                <?php echo Form::hidden('staff_no', $staff_no); ?>
+            <div class="form-group">
+                <div class="col-sm-2 col-sm-offset-2">
+                    <label class="control-label" for="form_staff_no">Staff No</label>
+                </div>
+                <div class="col-sm-6">
+                    <?= $staff_no ?>
+                    <input name="staff_no" value="<?= $staff_no ?>" type="hidden" id="form_staff_no" />
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <?php echo Form::label('Name', 'name', ['class' => 'col-sm-4 control-label']); ?>
-            <div class="col-sm-8">
-                <?= $name; ?>
-                <?php echo Form::hidden('name', $name); ?>
+            <div class="form-group">
+                <div class="col-sm-2 col-sm-offset-2">
+                    <label class="control-label" for="form_name">Name</label>
+                </div>
+                <div class="col-sm-6">
+                    <?= $name ?>
+                    <input name="name" value="<?= $name ?>" type="hidden" id="form_name" />
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <?php echo Form::label('Department', 'department', ['class' => 'col-sm-4 control-label']); ?>
-            <div class="col-sm-8">
-                <?= $department_arr[$department]; ?>
-                <?php echo Form::hidden('department', $department); ?>
+            <div class="form-group">
+                <div class="col-sm-2 col-sm-offset-2">
+                    <label class="control-label" for="form_department">Department</label>
+                </div>
+                <div class="col-sm-6">
+                    <?= $department_arr[$department]; ?>
+                    <input name="department" value="<?= $department ?>" type="hidden" id="form_department" />
+                </div>
             </div>
-        </div>
 
-        <div class="form-group">
-            <?php echo Form::label('Gender', 'gender', ['class' => 'col-sm-4 control-label']); ?>
-            <div class="col-sm-8">
-                <?= $gender_arr[$gender]; ?>
-                <?php echo Form::hidden('gender', $gender); ?>
+            <div class="form-group">
+                <div class="col-sm-2 col-sm-offset-2">
+                    <label class="control-label" for="form_gender">Gender</label>
+                </div>
+                <div class="col-sm-6">
+                    <?= $gender_arr[$gender]; ?>
+                    <input name="gender" value="<?= $gender ?>" type="hidden" id="form_gender" />
+                </div>
             </div>
-        </div>
 
-          <div class="form-group">
-            <div class="col-sm-offset-4 col-sm-8">
-            <?php echo Form::hidden(Config::get('security.csrf_token_key'), Security::fetch_token()); ?>
-                <?php echo Form::hidden('act', $act); ?>
-
-            <?php echo Form::submit('act', 'Send', ['class' => 'btn btn-success']); ?>&nbsp;&nbsp;
-            <?php echo Form::submit('back', 'Back', ['class' => 'btn btn-default']); ?>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-1">
+                    <input class="btn btn-success" name="send" value="Send" type="submit" id="form_send" />
+                </div>
+                <div class="col-sm-1">
+                    <input class="btn btn-default" name="back" value="Back" type="submit" id="form_back" />
+                </div>
             </div>
-          </div>
 
-        <?php echo Form::close(); ?>
+            <input name="fuel_csrf_token" value="<?= Security::fetch_token() ?>" type="hidden" id="form_fuel_csrf_token" />
+        </form>
     </div>
 </div>

@@ -35,7 +35,7 @@ class Controller_Staff extends Controller_Hybrid
 
         $view = \View::forge('staff/add');
 
-        $view->set('title', "Staff Add");
+        $view->set_global('title', "Staff Add");
 
         // 定義呼出
         Config::load('staff_master', true);
@@ -54,8 +54,8 @@ class Controller_Staff extends Controller_Hybrid
                 Session::set_flash($staff, Input::post($staff));
             }
 
-            // confに渡す際に新規か変更かどっちのアクションか渡す
-            Session::set_flash('act', Input::post('act'));
+            // confは新規と変更、共用なのでどちらかの判別fromのactionに渡す
+            Session::set_flash('action', 'insert');
 
             // 入力確認画面へ遷移
             if ($val->run() && Security::check_token()) {
@@ -89,7 +89,7 @@ class Controller_Staff extends Controller_Hybrid
             Session::keep_flash($staff);
         }
 
-        $view->set('act', Session::get_flash('act'));
+        $view->set('action', Session::get_flash('action'));
 
         $this->template->title = 'Staff &raquo; Conf';
         $this->template->content = $view;
@@ -100,29 +100,30 @@ class Controller_Staff extends Controller_Hybrid
      */
     public function action_insert()
     {
-        // postされたデータを取り出す
-        $val = [
-            'staff_no'        => Input::post('staff_no')
-            , 'name'          => Input::post('name')
-            , 'department'    => Input::post('department')
-            , 'gender'        => Input::post('gender')
-        ];
+        if (Security::check_token()) {
+            // postされたデータを取り出す
+            $val = [
+                'staff_no'        => Input::post('staff_no')
+                , 'name'          => Input::post('name')
+                , 'department'    => Input::post('department')
+                , 'gender'        => Input::post('gender')
+            ];
 
-        // トランザクション
-        try {
-            DB::start_transaction();
+            // トランザクション
+            try {
+                DB::start_transaction();
 
-            Model_Staff::staff_insert_query($val);
+                Model_Staff::staff_insert_query($val);
 
-            DB::commit_transaction();
+                DB::commit_transaction();
 
-            Response::redirect('staff');
-        } catch (\Exception $e) {
-            DB::rollback_transaction();
+                Response::redirect('staff');
+            } catch (\Exception $e) {
+                DB::rollback_transaction();
 
-            throw $e;
+                throw $e;
+            }
         }
-
     }
 
     /**
@@ -143,7 +144,7 @@ class Controller_Staff extends Controller_Hybrid
         $view->set('staff', Model_Staff::staff_detail_query($id));
 
 
-        $view->set('act', Session::get_flash('act'));
+        $view->set('action', Session::get_flash('action'));
 
         $this->template->title = 'Staff &raquo; Detail';
         $this->template->content = $view;
@@ -159,7 +160,7 @@ class Controller_Staff extends Controller_Hybrid
 
         $view = \View::forge('staff/edit');
 
-        $view->set('title', "Staff Edit");
+        $view->set_global('title', "Staff Edit");
 
         // 定義呼出
         Config::load('staff_master', true);
@@ -173,6 +174,7 @@ class Controller_Staff extends Controller_Hybrid
         $val = Model_Staff::validate('edit', $id);
         $view->set_global('val', $val);
 
+
         // POSTされた各データをフラッシュセッションに保存
         if (Input::method() == 'POST') {
 
@@ -181,8 +183,8 @@ class Controller_Staff extends Controller_Hybrid
                 Session::set_flash($staff, Input::post($staff));
             }
 
-            // confに渡す際に新規か変更かどっちのアクションか渡す
-            Session::set_flash('act', Input::post('act'));
+            // confは新規と変更、共用なのでどちらかの判別fromのactionに渡す
+            Session::set_flash('action', 'update');
 
             Session::set('id', $id);
 
@@ -202,30 +204,32 @@ class Controller_Staff extends Controller_Hybrid
      */
     public function action_update()
     {
-        $val = [
-            'staff_no'        => Input::post('staff_no')
-            , 'name'          => Input::post('name')
-            , 'department'    => Input::post('department')
-            , 'gender'        => Input::post('gender')
-        ];
+        if (Security::check_token()) {
+            $val = [
+                'staff_no'        => Input::post('staff_no')
+                , 'name'          => Input::post('name')
+                , 'department'    => Input::post('department')
+                , 'gender'        => Input::post('gender')
+            ];
 
 
-        $id = Session::get('id');
-        Session::delete('id');
+            $id = Session::get('id');
+            Session::delete('id');
 
-        // トランザクション
-        try {
-            DB::start_transaction();
+            // トランザクション
+            try {
+                DB::start_transaction();
 
-            Model_Staff::staff_update_query($id, $val);
+                Model_Staff::staff_update_query($id, $val);
 
-            DB::commit_transaction();
+                DB::commit_transaction();
 
-            Response::redirect('staff/detail/'.$id);
-        } catch (\Exception $e) {
-            DB::rollback_transaction();
+                Response::redirect('staff/detail/'.$id);
+            } catch (\Exception $e) {
+                DB::rollback_transaction();
 
-            throw $e;
+                throw $e;
+            }
         }
     }
 
