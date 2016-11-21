@@ -27,8 +27,13 @@
         <div class="row">
             <div class="col-sm-12">
                 <?php echo Html::anchor('staff/edit/'.$staff['id'],'Edit', ['class' => 'btn btn-primary']);?>
+            <form class="form-horizontal" action="<?= Uri::create('staff/destory') ?>" name="delete_form" accept-charset="utf-8" method="post">
+                <input name="fuel_csrf_token" value="<?= Security::fetch_token() ?>" type="hidden" id="form_fuel_csrf_token" />
+                <input name="id" value="<?= $staff['id'] ?>" type="hidden" id="id" />
+                <input class="btn btn-danger" name="delete_button" value="Delete" type="button" id="delete_button" />
+            </form>
             </div>
         </div>
 
     </div>
-</div>
+</div><?php echo Asset::js('del_submit.js'); ?>
