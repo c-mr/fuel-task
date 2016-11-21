@@ -10,21 +10,20 @@ class Controller_Staff extends Controller_Template
      */
     public function action_index()
     {
-        $data['subnav'] = array('index'=> 'active' );
-        $this->template->title = 'Staff &raquo; Index';
+        $view = \View::forge('staff/index');
 
         // 定義呼出
         Config::load('staff_master', true);
-        $data['department_arr'] = Config::get('staff_master.department');
-        $data['gender_arr'] = Config::get('staff_master.gender');
+        $view->set('department_arr', Config::get('staff_master.department'));
+        $view->set('gender_arr', Config::get('staff_master.gender'));
 
-
+        // ページネーション呼出
         $pagination = Model_Staff::staff_list_pagination();
-        $data['pagination'] = $pagination;
+        $view->set('pagination', $pagination);
+        $view->set('staffs', Model_Staff::staff_list_query($pagination->per_page, $pagination->offset));
 
-        $data['staffs'] = Model_Staff::staff_list_query($pagination->per_page, $pagination->offset);
-
-        $this->template->content = View::forge('staff/index', $data);
+        $this->template->title = 'Staff &raquo; Index';
+        $this->template->content = $view;
     }
 
     /**
