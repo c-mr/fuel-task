@@ -1,6 +1,6 @@
 <?php
 
-class Controller_Staff extends Controller_Template
+class Controller_Staff extends Controller_Hybrid
 {
 
     private $staffs = ['staff_no', 'name', 'department', 'gender'];
@@ -31,26 +31,26 @@ class Controller_Staff extends Controller_Template
      */
     public function action_add()
     {
-        $data['subnav'] = array('add'=> 'active' );
-        $this->template->title = 'Staff &raquo; Add';
+        // 共通化した部分(_form.php)に送るものはglobal
 
-        // タイトル
-        $data['title'] = "Staff Add";
+        $view = \View::forge('staff/add');
 
-        // _form.php(共通化した部分)に送る
-        $view = \View::forge('staff/_form');
+        $view->set('title', "Staff Add");
+
         // 定義呼出
         Config::load('staff_master', true);
         $view->set_global('department_arr', Config::get('staff_master.department'));
         $view->set_global('gender_arr', Config::get('staff_master.gender'));
+
         // 入力チェック呼出
         $val = Model_Staff::validate('add');
         $view->set_global('val', $val);
 
         // POSTされた各データをフラッシュセッションに保存
         if (Input::method() == 'POST') {
+
+            // セッションにフラッシュ変数をセット
             foreach ($this->staffs as $staff) {
-                // セッションにフラッシュ変数をセット
                 Session::set_flash($staff, Input::post($staff));
             }
 
@@ -64,7 +64,8 @@ class Controller_Staff extends Controller_Template
 
         }
 
-        $this->template->content = View::forge('staff/add', $data);
+        $this->template->title = 'Staff &raquo; Add';
+        $this->template->content = $view;
     }
 
     /**
@@ -72,25 +73,26 @@ class Controller_Staff extends Controller_Template
      */
     public function action_conf()
     {
-        $this->template->title = 'Staff &raquo; Conf';
+        $view = \View::forge('staff/conf');
 
-        $data['title'] = "Staff Conf";
+        $view->set('title', "Staff Conf");
 
         // 定義呼出
         Config::load('staff_master', true);
-        $data['department_arr'] = Config::get('staff_master.department');
-        $data['gender_arr'] = Config::get('staff_master.gender');
+        $view->set('department_arr', Config::get('staff_master.department'));
+        $view->set('gender_arr', Config::get('staff_master.gender'));
 
         foreach ($this->staffs as $staff) {
             // セッションからフラッシュ変数を取出
-            $data[$staff] = Session::get_flash($staff);
+           $view->set($staff, Session::get_flash($staff));
             // セッション変数を次のリクエストを維持
             Session::keep_flash($staff);
         }
 
-        $data['act'] = Session::get_flash('act');
+        $view->set('act', Session::get_flash('act'));
 
-        $this->template->content = View::forge('staff/conf', $data);
+        $this->template->title = 'Staff &raquo; Conf';
+        $this->template->content = $view;
     }
 
     /**
@@ -98,12 +100,13 @@ class Controller_Staff extends Controller_Template
      */
     public function action_insert()
     {
+        // postされたデータを取り出す
         $val = [
-                'staff_no'      => Input::post('staff_no'),
-                'name'          => Input::post('name'),
-                'department'    => Input::post('department'),
-                'gender'        => Input::post('gender')
-            ];
+            'staff_no'        => Input::post('staff_no')
+            , 'name'          => Input::post('name')
+            , 'department'    => Input::post('department')
+            , 'gender'        => Input::post('gender')
+        ];
 
         // トランザクション
         try {
@@ -124,23 +127,26 @@ class Controller_Staff extends Controller_Template
 
     /**
      * 詳細画面
-     * @param  int $id
+     * @param  [int] $id
      */
     public function action_detail($id = null)
     {
-        $data['subnav'] = array('detail'=> 'active' );
-        $this->template->title = 'Staff &raquo; Detail';
+        $view = \View::forge('staff/detail');
 
-        $data['title'] = "Staff Detail";
+        $view->set('title', "Staff Detail");
 
         // 定義呼出
         Config::load('staff_master', true);
-        $data['department_arr'] = Config::get('staff_master.department');
-        $data['gender_arr'] = Config::get('staff_master.gender');
+        $view->set('department_arr', Config::get('staff_master.department'));
+        $view->set('gender_arr', Config::get('staff_master.gender'));
 
-        $data['staff'] = Model_Staff::staff_detail_query($id);
+        $view->set('staff', Model_Staff::staff_detail_query($id));
 
-        $this->template->content = View::forge('staff/detail', $data);
+
+        $view->set('act', Session::get_flash('act'));
+
+        $this->template->title = 'Staff &raquo; Detail';
+        $this->template->content = $view;
     }
 
     /**
@@ -149,29 +155,30 @@ class Controller_Staff extends Controller_Template
      */
     public function action_edit($id = null)
     {
-        $data['subnav'] = array('edit'=> 'active' );
-        $data['title'] = "Staff Edit";
+        // 共通化した部分(_form.php)に送るものはglobal
 
-        // _form.php(共通化した部分)に送る
-        $view = \View::forge('staff/_form');
+        $view = \View::forge('staff/edit');
+
+        $view->set('title', "Staff Edit");
+
         // 定義呼出
         Config::load('staff_master', true);
         $view->set_global('department_arr', Config::get('staff_master.department'));
         $view->set_global('gender_arr', Config::get('staff_master.gender'));
 
+
         $view->set_global('staff', Model_Staff::staff_detail_query($id));
 
         // 入力チェック呼出
-        $val = Model_Staff::validate('add', $id);
+        $val = Model_Staff::validate('edit', $id);
         $view->set_global('val', $val);
 
         // POSTされた各データをフラッシュセッションに保存
         if (Input::method() == 'POST') {
+
+            // セッションにフラッシュ変数をセット
             foreach ($this->staffs as $staff) {
-                // セッションフラッシュに変数をセット
                 Session::set_flash($staff, Input::post($staff));
-                // セッション変数を次のリクエストを維持
-                Session::keep_flash($staff);
             }
 
             // confに渡す際に新規か変更かどっちのアクションか渡す
@@ -187,21 +194,24 @@ class Controller_Staff extends Controller_Template
         }
 
         $this->template->title = 'Staff &raquo; Edit';
-        $this->template->content = View::forge('staff/edit', $data);
+        $this->template->content = $view;
     }
 
+    /**
+     * DB更新
+     */
     public function action_update()
     {
         $val = [
-                'staff_no'      => Input::post('staff_no'),
-                'name'          => Input::post('name'),
-                'department'    => Input::post('department'),
-                'gender'        => Input::post('gender')
-            ];
+            'staff_no'        => Input::post('staff_no')
+            , 'name'          => Input::post('name')
+            , 'department'    => Input::post('department')
+            , 'gender'        => Input::post('gender')
+        ];
 
 
-            $id = Session::get('id');
-            Session::delete('id');
+        $id = Session::get('id');
+        Session::delete('id');
 
         // トランザクション
         try {
@@ -211,7 +221,7 @@ class Controller_Staff extends Controller_Template
 
             DB::commit_transaction();
 
-            Response::redirect('staff');
+            Response::redirect('staff/detail/'.$id);
         } catch (\Exception $e) {
             DB::rollback_transaction();
 
