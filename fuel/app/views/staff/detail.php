@@ -10,23 +10,23 @@
         </div>
 
         <div class="row">
-            <div class="col-sm-2"><label class="control-label" for="form_staff_no">Name</label></div>
+            <div class="col-sm-2"><label class="control-label" for="form_name">Name</label></div>
             <div class="col-sm-10"><?= $staff['name'] ?></div>
         </div>
 
         <div class="row">
-            <div class="col-sm-2"><label class="control-label" for="form_staff_no">Department</label></div>
+            <div class="col-sm-2"><label class="control-label" for="form_department">Department</label></div>
             <div class="col-sm-10"><?= $department_arr[$staff['department']] ?></div>
         </div>
 
         <div class="row">
-            <div class="col-sm-2"><label class="control-label" for="form_staff_no">Gender</label></div>
+            <div class="col-sm-2"><label class="control-label" for="form_gender">Gender</label></div>
             <div class="col-sm-10"><?= $gender_arr[$staff['gender']] ?></div>
         </div>
 
         <div class="row">
             <div class="col-sm-12">
-                <?php echo Html::anchor('./staff/edit/'.$staff['id'],'Edit', ['class' => 'btn btn-primary']);?>
+                <?php echo Html::anchor('staff/edit/'.$staff['id'],'Edit', ['class' => 'btn btn-primary']);?>
             </div>
         </div>
 
