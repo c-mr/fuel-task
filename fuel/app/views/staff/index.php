@@ -1,4 +1,4 @@
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr><th>社員番号</th><th>名前</th><th>部署</th><th>性別</th><th>&nbsp</th></tr>
     </thead>
@@ -22,4 +22,4 @@ foreach ($staffs as $staff) {
 <?php echo Pagination::instance('pagination')->render(); ?>
 
 
-<div class="row"><?php echo Html::anchor('./staff/add','New Entry', ['class' => 'btn btn-primary']);?></div>
+<div class="row"><?php echo Html::anchor('staff/add','New Entry', ['class' => 'btn btn-primary']);?></div>
