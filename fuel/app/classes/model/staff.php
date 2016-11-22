@@ -1,31 +1,7 @@
 <?php
 
-class Model_Staff extends \Orm\Model
+class Model_Staff
 {
-    protected static $_properties = [
-        'id',
-        'staff_no',
-        'name',
-        'department',
-        'gender',
-        'deleted_at',
-        'created_at',
-        'updated_at',
-    ];
-
-    // protected static $_observers = [
-    //     'Orm\Observer_CreatedAt' => [
-    //         'events' => ['before_insert'],
-    //         'mysql_timestamp' => true,
-    //     ],
-    //     'Orm\Observer_UpdatedAt' => [
-    //         'events' => ['before_update'],
-    //         'mysql_timestamp' => true,
-    //     ],
-    // ];
-
-    protected static $_table_name = 'staffs';
-
     /**
      * 入力チェック
      */
@@ -61,7 +37,7 @@ class Model_Staff extends \Orm\Model
     public static function staff_list_pagination()
     {
         // ページネーション
-        $sql = DB::query('SELECT count(*) AS count FROM `staffs` WHERE deleted_at IS NULL');
+        $sql = DB::query('SELECT count(*) AS count FROM staffs WHERE deleted_at IS NULL');
 
 
         $result= $sql->execute()->current();
@@ -90,12 +66,16 @@ class Model_Staff extends \Orm\Model
      */
     public static function staff_list_query($limit, $offset)
     {
-        $sql = DB::query(sprintf(
-                'SELECT * FROM `staffs` WHERE deleted_at IS NULL ORDER BY `id` DESC LIMIT %d OFFSET %d'
-                , $limit
-                , $offset
-            ));
+        $sql = DB::query(
+            'SELECT * FROM staffs'
+            .' WHERE deleted_at IS NULL'
+            .' ORDER BY id DESC'
+            .' LIMIT :limit'
+            .' OFFSET :offset'
+        );
 
+        // SQLインジェクション対策（複数の値をbindする時はparametersでも可)
+        $sql->parameters(['limit' => $limit, 'offset' => $offset]);
 
         return $sql->execute();
     }
@@ -107,8 +87,10 @@ class Model_Staff extends \Orm\Model
      */
     public static function staff_detail_query($id)
     {
+        $sql = DB::query('SELECT * FROM staffs WHERE id = :id');
 
-        $sql = DB::query(sprintf('SELECT * FROM `staffs` WHERE `id` = %d', $id));
+        // SQLインジェクション対策(bind)
+        $sql->bind('id', $id);
 
 
         return $sql->execute()->current();
@@ -121,13 +103,16 @@ class Model_Staff extends \Orm\Model
      */
     public static function staff_insert_query($val)
     {
-        $sql = DB::query(sprintf(
-            'INSERT INTO `staffs` (`staff_no`, `name`, `department`, `gender`, `created_at`)'
-            .' VALUES (\'%d\', \'%s\', \'%d\', \'%d\', now())'
-            , $val['staff_no']
-            , $val['name']
-            , $val['department']
-            , $val['gender']));
+        $sql = DB::query(
+            'INSERT INTO staffs (staff_no, name, department, gender, created_at)'
+            .' VALUES (:staff_no, :name, :department, :gender, now())'
+        );
+
+        // SQLインジェクション対策(bind)
+        $sql->bind('staff_no', $val['staff_no']);
+        $sql->bind('name', $val['name']);
+        $sql->bind('department', $val['department']);
+        $sql->bind('gender', $val['gender']);
 
         return $sql->execute();
     }
@@ -140,15 +125,22 @@ class Model_Staff extends \Orm\Model
      */
     public static function staff_update_query($id, $val)
     {
-        $sql = DB::query(sprintf(
-            'UPDATE `staffs`'
-            .' SET `staff_no` = \'%d\', `name` = \'%s\', `department` = \'%d\', `gender` = \'%d\', updated_at = now()'
-            .' WHERE `id` = \'%d\''
-            , $val['staff_no']
-            , $val['name']
-            , $val['department']
-            , $val['gender']
-            , $id));
+        $sql = DB::query(
+            'UPDATE staffs'
+            .' SET staff_no = :staff_no,'
+            .' name = :name,'
+            .' department = :department,'
+            .' gender = :gender,'
+            .' updated_at = now()'
+            .' WHERE id = :id'
+        );
+
+        // SQLインジェクション対策(bind)
+        $sql->bind('staff_no', $val['staff_no']);
+        $sql->bind('name', $val['name']);
+        $sql->bind('department', $val['department']);
+        $sql->bind('gender', $val['gender']);
+        $sql->bind('id', $id);
 
         return $sql->execute();
     }
@@ -161,9 +153,12 @@ class Model_Staff extends \Orm\Model
      */
     public static function staff_delete_query($id)
     {
-        $sql = DB::query(sprintf(
-            'UPDATE `staffs` SET updated_at = now(), deleted_at = now() WHERE `id` = \'%d\''
-            , $id));
+        $sql = DB::query(
+            'UPDATE staffs SET updated_at = now(), deleted_at = now() WHERE id = :id'
+        );
+
+        // SQLインジェクション対策(bind)
+        $sql->bind('id', $id);
 
         // SqlLog
         Log::write('ERROR', $sql);

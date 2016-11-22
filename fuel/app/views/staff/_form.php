@@ -12,7 +12,7 @@
                     <label class="control-label" for="form_staff_no">Staff No</label>
                 </div>
                 <div class="col-sm-6">
-                    <input class="form-control" placeholder="Staff No" name="staff_no" value="<?= Input::post('staff_no', isset($staff) ? $staff['staff_no'] : '') ?>" type="text" id="form_staff_no" />
+                    <input class="form-control" placeholder="Staff No" name="staff_no" value="<?= Input::post('staff_no', isset($staff) ? sprintf('%07d', $staff['staff_no']) : '') ?>" type="text" id="form_staff_no" />
                     <?php if($val->error('staff_no')):?>
                         <p class="alert alert-warning"><?= $val->error('staff_no'); ?></p>
                     <?php endif; ?>

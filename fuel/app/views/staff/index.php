@@ -1,6 +1,12 @@
 <table class="table table-striped">
     <thead>
-        <tr><th>社員番号</th><th>名前</th><th>部署</th><th>性別</th><th>&nbsp</th></tr>
+        <tr>
+            <th>Staff No</th>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Gender</th>
+            <th>&nbsp</th>
+        </tr>
     </thead>
     <tbody>
 <?php

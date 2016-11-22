@@ -7,31 +7,31 @@
         <table class="table table-bordered">
             <tbody>
 
-                <tr>
-                    <th class="active">Staff No</th>
-                    <td><?= sprintf('%07d', $staff['staff_no']) ?></td>
+                <tr class="something">
+                    <th class="col-sm-2">Staff No</th>
+                    <td class="col-sm-6"><?= sprintf('%07d', $staff['staff_no']) ?></td>
                 </tr>
 
-                <tr>
-                    <th class="active">Name</th>
-                    <td><?= $staff['name'] ?></td>
+                <tr class="something">
+                    <th class="col-sm-2">Name</th>
+                    <td class="col-sm-6"><?= $staff['name'] ?></td>
                 </tr>
 
-                <tr>
-                    <th class="active">Department</th>
-                    <td><?= $department_arr[$staff['department']] ?></td>
+                <tr class="something">
+                    <th class="col-sm-2">Department</th>
+                    <td class="col-sm-6"><?= $department_arr[$staff['department']] ?></td>
                 </tr>
 
-                <tr>
-                    <th class="active">Gender</th>
-                    <td><?= $gender_arr[$staff['gender']] ?></td>
+                <tr class="something">
+                    <th class="col-sm-2">Gender</th>
+                    <td class="col-sm-6"><?= $gender_arr[$staff['gender']] ?></td>
                 </tr>
 
             </tbody>
         </table>
 
         <div class="row">
-            <div class="col-sm-1">
+            <div class="col-sm-offset-3 col-sm-1">
                 <?= Html::anchor('staff/edit/'.$staff['id'], 'Edit', ['class' => 'btn btn-primary']);?>
             </div>
             <div class="col-sm-1">

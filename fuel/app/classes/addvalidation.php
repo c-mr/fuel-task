@@ -11,20 +11,26 @@ class AddValidation
         list($table, $field) = explode('.', $options);
 
         // $idに値があれば$idのIDは除外
-        $check_id = "";
         if(isset($id)){
-            $check_id = ' id <> '.$id.' AND';
+            $sql = DB::query(
+                'SELECT LOWER('.$field.') FROM '.$table
+                .' WHERE '.$field.' = :val AND'
+                .' id <> :id'
+                .' AND deleted_at IS NULL'
+            );
+            $sql->bind('id', $id);
+        }else{
+            $sql = DB::query(
+                'SELECT LOWER('.$field.') FROM '.$table
+                .' WHERE '.$field.' = :val'
+                .' AND deleted_at IS NULL'
+            );
         }
 
-        $sql = DB::query(sprintf(
-                'SELECT LOWER(%s) FROM `%s`'
-                .' WHERE%s %s = %s AND deleted_at IS NULL'
-                , $field
-                , $table
-                , $check_id
-                , $field
-                , Str::lower($val)
-            ));
+        $sql->bind('table', $table);
+        $sql->bind('check_id', $check_id);
+        $val = Str::lower($val);
+        $sql->bind('val', $val);
 
 
         $result = $sql->execute();
