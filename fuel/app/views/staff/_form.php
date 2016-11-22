@@ -12,7 +12,7 @@
                     <label class="control-label" for="form_staff_no">Staff No</label>
                 </div>
                 <div class="col-sm-6">
-                    <input class="form-control" placeholder="Staff No" name="staff_no" value="<?= Input::post('staff_no', isset($staff) ? sprintf('%07d', $staff['staff_no']) : '') ?>" type="text" id="form_staff_no" />
+                    <input class="form-control" placeholder="Staff No" name="staff_no" value="<?= e(Input::post('staff_no', isset($staff)) ? sprintf('%07d', $staff['staff_no']) : '') ?>" type="text" id="form_staff_no" />
                     <?php if($val->error('staff_no')):?>
                         <p class="alert alert-warning"><?= $val->error('staff_no'); ?></p>
                     <?php endif; ?>
@@ -24,7 +24,7 @@
                     <label class="control-label" for="form_name">Name</label>
                 </div>
                 <div class="col-sm-6">
-                    <input class="form-control" placeholder="Name" name="name" value="<?= Input::post('name', isset($staff) ? $staff['name'] : '') ?>" type="text" id="form_name" />
+                    <input class="form-control" placeholder="Name" name="name" value="<?= e(Input::post('name', isset($staff)) ? $staff['name'] : '') ?>" type="text" id="form_name" />
                     <?php if($val->error('name')):?>
                         <p class="alert alert-warning"><?= $val->error('name'); ?></p>
                     <?php endif; ?>
