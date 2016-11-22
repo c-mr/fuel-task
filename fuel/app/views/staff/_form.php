@@ -4,7 +4,7 @@
     </div>
     <div class="panel-body">
 
-        <form class="form-horizontal" action="<?= Uri::current() ?>" accept-charset="utf-8" method="post">
+        <form id="form" class="form-horizontal" action="<?= Uri::current() ?>" accept-charset="utf-8" method="post" name="form">
 
 
             <div class="form-group">
@@ -64,14 +64,16 @@
                 </div>
             </div>
 
+            <input name="fuel_csrf_token" value="<?= Security::fetch_token() ?>" type="hidden" id="form_fuel_csrf_token" />
+
             <div class="form-group">
                 <div class="col-sm-offset-4 col-sm-6">
-                    <input class="btn btn-success" name="send" value="Send" type="submit" id="form_send" />
+                    <input class="btn btn-success" name="check" value="Check" type="button" id="check_button" />
                 </div>
             </div>
 
-            <input name="fuel_csrf_token" value="<?= Security::fetch_token() ?>" type="hidden" id="form_fuel_csrf_token" />
         </form>
-
     </div>
 </div>
+
+<?php echo Asset::js('submit.js'); ?>

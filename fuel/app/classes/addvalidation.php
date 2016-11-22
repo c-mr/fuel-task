@@ -10,6 +10,7 @@ class AddValidation
     {
         list($table, $field) = explode('.', $options);
 
+        // $idに値があれば$idのIDは除外
         $check_id = "";
         if(isset($id)){
             $check_id = ' id <> '.$id.' AND';

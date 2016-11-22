@@ -26,10 +26,13 @@ class Model_Staff extends \Orm\Model
 
     protected static $_table_name = 'staffs';
 
-    //バリデーション
+    /**
+     * 入力チェック
+     */
     public static function validate($factory, $id = null)
     {
         $val = Validation::forge($factory);
+
         // 追加validation呼出
         $val->add_callable('AddValidation');
 
@@ -37,13 +40,17 @@ class Model_Staff extends \Orm\Model
             ->add_rule('required')
             ->add_rule('unique', 'staffs.staff_no', $id)
             ->add_rule('exact_length', 7);
+
         $val->add('name', 'Name')
             ->add_rule('required')
             ->add_rule('max_length', 200);
+
         $val->add('department', 'Department')
             ->add_rule('required');
+
         $val->add('gender', 'Gender')
             ->add_rule('required');
+
         return $val;
     }
 
@@ -83,7 +90,6 @@ class Model_Staff extends \Orm\Model
      */
     public static function staff_list_query($limit, $offset)
     {
-
         $sql = DB::query(sprintf(
                 'SELECT * FROM `staffs` WHERE deleted_at IS NULL ORDER BY `id` DESC LIMIT %d OFFSET %d'
                 , $limit
@@ -134,7 +140,6 @@ class Model_Staff extends \Orm\Model
      */
     public static function staff_update_query($id, $val)
     {
-
         $sql = DB::query(sprintf(
             'UPDATE `staffs`'
             .' SET `staff_no` = \'%d\', `name` = \'%s\', `department` = \'%d\', `gender` = \'%d\', updated_at = now()'
@@ -156,10 +161,10 @@ class Model_Staff extends \Orm\Model
      */
     public static function staff_delete_query($id)
     {
-
         $sql = DB::query(sprintf(
             'UPDATE `staffs` SET updated_at = now(), deleted_at = now() WHERE `id` = \'%d\''
             , $id));
+
         // SqlLog
         Log::write('ERROR', $sql);
 
