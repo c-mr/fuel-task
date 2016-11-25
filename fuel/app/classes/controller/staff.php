@@ -305,4 +305,30 @@ class Controller_Staff extends Controller_Hybrid
         }
     }
 
+
+    /**
+     * DB削除
+     */
+    public function post_serach()
+    {
+        if (Input::method() == 'POST' && Security::check_token()) {
+            // トランザクション
+            try {
+                DB::start_transaction();
+
+                Model_Staff::staff_delete_query($id);
+
+                DB::commit_transaction();
+
+                Response::redirect('staff');
+
+            } catch (\Exception $e) {
+                DB::rollback_transaction();
+
+                throw $e;
+
+            }
+        }
+    }
+
 }
