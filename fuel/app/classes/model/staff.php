@@ -30,14 +30,74 @@ class Model_Staff
         return $val;
     }
 
+
+    /**
+     * 検索時のwhere句の作成
+     * @param  [text] $keyword キーワード
+     * @param  [int]  $gender  性別
+     * @return [text]          生成されたWhere句
+     */
+    public static function staff_make_where($keyword = NULL, $gender = NULL)
+    {
+        $where = "";
+
+        // キーワード検索
+        if ($keyword) {
+            $keyword_arr = [];
+
+            // 全角英数とスペースを半角に置き換え
+            $keyword = mb_convert_kana($keyword, 'as', 'UTF-8');
+            // タブの削除
+            $keyword = preg_replace("[\t]","",$keyword);
+            // 前後の空白を削除して半角スペース区切りで配列に
+            $keyword_arr = explode(" ", trim($keyword));
+
+            // Department定義呼出
+            Config::load('staff_master', true);
+            $department_arr = Config::get('staff_master.department');
+
+            // 検索対象カラム
+            $col = ['staff_no', 'name'];
+
+            $arr = [];
+
+            for ($i=0; $i < count($keyword_arr); $i++) {
+                foreach ($department_arr as $key => $value) {
+                        // キーワードの中にDepartmentと同じ値のものがあれば足してあげる
+                    if (Str::upper($department_arr[$key]) == Str::upper($keyword_arr[$i])) {
+                        $arr[] = 'department='.$key;
+                    }
+                }
+                // INT型でもTEXT型でも大文字小文字どちらでも検索できるように
+                for ($j=0; $j < count($col); $j++) {
+                    $arr[] = 'CAST('.$col[$j].' AS CHAR) COLLATE utf8_unicode_ci LIKE \'%'.$keyword_arr[$i].'%\'';
+                }
+            }
+
+            // ORでつなげる
+            $where .= " AND (".implode(' OR ', $arr).")";
+
+        }
+
+        // 性別検索
+        if($gender){
+            $where .= " AND gender=".$gender;
+        }
+
+        return $where;
+
+    }
     /**
      * スタッフリストページネーション
      * @return [Object] ページネーションのコンフィグやテンプレートなど
      */
-    public static function staff_list_pagination()
+    public static function staff_list_pagination($where)
     {
         // ページネーション
-        $sql = DB::query('SELECT count(*) AS count FROM staffs WHERE deleted_at IS NULL');
+        $sql = DB::query(
+            'SELECT count(*) AS count FROM staffs'.
+            ' WHERE deleted_at IS NULL'.$where
+        );
 
 
         $result= $sql->execute()->current();
@@ -64,11 +124,12 @@ class Model_Staff
      * @param  [Int]    $offset [limit]
      * @return [Object]         [SQL結果]
      */
-    public static function staff_list_query($limit, $offset)
+    public static function staff_list_query($limit, $offset, $where = null)
     {
         $sql = DB::query(
             'SELECT * FROM staffs'
             .' WHERE deleted_at IS NULL'
+            . $where
             .' ORDER BY id DESC'
             .' LIMIT :limit'
             .' OFFSET :offset'

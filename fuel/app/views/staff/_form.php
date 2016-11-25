@@ -54,8 +54,8 @@
                 </div>
                 <div class="col-sm-6">
                     <?php foreach ($gender_arr as $key => $value):?>
-                    <label class="radio-inline" for="form_gender_<?= $key ?>"><?= $value ?>
-                        <input id="form_gender_<?= $key ?>" name="gender" value="<?= $key ?>" type="radio"<?= (Input::post('gender', isset($staff) ? $staff['gender'] : '')) == $key ? ' checked="checked"' : '' ?> />
+                    <label class="radio-inline" for="form_gender_<?= $key ?>">
+                        <?= $value ?><input id="form_gender_<?= $key ?>" name="gender" value="<?= $key ?>" type="radio"<?= (Input::post('gender', isset($staff) ? $staff['gender'] : '')) == $key ? ' checked="checked"' : '' ?> />
                     </label>
                     <?php endforeach; ?>
                     <?php if($val->error('gender')):?>
@@ -76,4 +76,4 @@
     </div>
 </div>
 
-<?php echo Asset::js('submit.js'); ?>
+<?php echo Asset::js('staff.js'); ?>

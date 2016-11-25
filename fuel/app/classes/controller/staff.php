@@ -17,10 +17,19 @@ class Controller_Staff extends Controller_Hybrid
         $view->set('department_arr', Config::get('staff_master.department'));
         $view->set('gender_arr', Config::get('staff_master.gender'));
 
+        // 検索
+        $keyword = Input::get('keyword');
+        $gender = Input::get('gender');
+
+        // 検索Where句作成
+        $where = Model_Staff::staff_make_where($keyword, $gender);
+
         // ページネーション呼出
-        $pagination = Model_Staff::staff_list_pagination();
+        $pagination = Model_Staff::staff_list_pagination($where);
         $view->set('pagination', $pagination);
-        $view->set('staffs', Model_Staff::staff_list_query($pagination->per_page, $pagination->offset));
+
+        $result = Model_Staff::staff_list_query($pagination->per_page, $pagination->offset, $where);
+        $view->set('staffs', $result);
 
         $this->template->title = 'Staff &raquo; Index';
         $this->template->content = $view;

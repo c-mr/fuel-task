@@ -1,4 +1,22 @@
-<table class="table table-striped">
+<form id="serach_form" class="form-horizontal" action="<?= Uri::current() ?>" accept-charset="utf-8" method="get" name="form">
+    <div class="input-group">
+        <span class="input-group-addon">Key Word</span>
+        <input type="text" class="form-control" name="keyword" value="<?= e(Input::get('keyword') ? Input::get('keyword') : '') ?>" placeholder="Keyword">
+
+        <span class="input-group-addon">
+            <?php foreach ($gender_arr as $key => $value):?>
+            <label style="padding-top: 0px;" class="radio-inline" for="form_gender_<?= $key ?>"><input id="form_gender_<?= $key ?>" name="gender" value="<?= $key ?>" type="radio"<?= Input::get('gender') == $key ? ' checked="checked"' : '' ?> /><?= $value ?></label>
+            <?php endforeach; ?>
+        </span>
+
+        <span class="input-group-btn">
+            <button type="button" class="btn btn-success" id="serach_button">Serach</button>
+            <button type="button" class="btn btn-warning" id="reset_button">Reset</button>
+        </span>
+    </div>
+</form>
+
+<table id="staffs-table" class="table table-striped">
     <thead>
         <tr>
             <th>Staff No</th>
@@ -29,3 +47,5 @@ foreach ($staffs as $staff) {
 
 
 <div class="row"><?php echo Html::anchor('staff/add','New Entry', ['class' => 'btn btn-primary']);?></div>
+
+<?php echo Asset::js('staff.js'); ?>
