@@ -87,13 +87,19 @@ class Model_Staff
         return $where;
 
     }
+
+    public static function staff_make_order($sort_col="id", $sort_key="DESC")
+    {
+        $order_by = ' ORDER BY '.$sort_col.' '.$sort_key;
+        return $order_by;
+    }
+
     /**
      * スタッフリストページネーション
      * @return [Object] ページネーションのコンフィグやテンプレートなど
      */
     public static function staff_list_pagination($where)
     {
-        // ページネーション
         $sql = DB::query(
             'SELECT count(*) AS count FROM staffs'.
             ' WHERE deleted_at IS NULL'.$where
@@ -124,13 +130,13 @@ class Model_Staff
      * @param  [Int]    $offset [limit]
      * @return [Object]         [SQL結果]
      */
-    public static function staff_list_query($limit, $offset, $where = null)
+    public static function staff_list_query($limit, $offset, $order_by = null, $where = null)
     {
         $sql = DB::query(
             'SELECT * FROM staffs'
             .' WHERE deleted_at IS NULL'
             . $where
-            .' ORDER BY id DESC'
+            . $order_by
             .' LIMIT :limit'
             .' OFFSET :offset'
         );

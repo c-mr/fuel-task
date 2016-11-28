@@ -24,11 +24,18 @@ class Controller_Staff extends Controller_Hybrid
         // 検索Where句作成
         $where = Model_Staff::staff_make_where($keyword, $gender);
 
+        // 検索 初期値はIDで降順
+        $sort_col = Input::get('col') ? Input::get('col') : 'id';
+        $sort_key = Input::get('key') ? Input::get('key') : 'DESC';
+
+        // ソートorder by 作成
+        $order_by = Model_Staff::staff_make_order($sort_col, $sort_key);
+
         // ページネーション呼出
         $pagination = Model_Staff::staff_list_pagination($where);
         $view->set('pagination', $pagination);
 
-        $result = Model_Staff::staff_list_query($pagination->per_page, $pagination->offset, $where);
+        $result = Model_Staff::staff_list_query($pagination->per_page, $pagination->offset, $order_by, $where);
         $view->set('staffs', $result);
 
         $this->template->title = 'Staff &raquo; Index';

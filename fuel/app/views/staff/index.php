@@ -1,28 +1,28 @@
-<form id="serach_form" class="form-horizontal" action="<?= Uri::current() ?>" accept-charset="utf-8" method="get" name="form">
-    <div class="input-group">
-        <span class="input-group-addon">Key Word</span>
-        <input type="text" class="form-control" name="keyword" value="<?= e(Input::get('keyword') ? Input::get('keyword') : '') ?>" placeholder="Keyword">
+<form id="form" class="form-horizontal" action="<?= Uri::current() ?>" accept-charset="utf-8" method="get" name="form">
 
-        <span class="input-group-addon">
-            <?php foreach ($gender_arr as $key => $value):?>
-            <label style="padding-top: 0px;" class="radio-inline" for="form_gender_<?= $key ?>"><input id="form_gender_<?= $key ?>" name="gender" value="<?= $key ?>" type="radio"<?= Input::get('gender') == $key ? ' checked="checked"' : '' ?> /><?= $value ?></label>
-            <?php endforeach; ?>
-        </span>
+<div id="serach_box" class="input-group">
+    <span class="input-group-addon">Key Word</span>
+    <input type="text" class="form-control" name="keyword" value="<?= e(Input::get('keyword') ? Input::get('keyword') : '') ?>" placeholder="Keyword">
 
-        <span class="input-group-btn">
-            <button type="button" class="btn btn-success" id="serach_button">Serach</button>
-            <button type="button" class="btn btn-warning" id="reset_button">Reset</button>
-        </span>
-    </div>
-</form>
+    <span class="input-group-addon">
+        <?php foreach ($gender_arr as $key => $value):?>
+        <label style="padding-top: 0px;" class="radio-inline" for="form_gender_<?= $key ?>"><input id="form_gender_<?= $key ?>" name="gender" value="<?= $key ?>" type="radio"<?= Input::get('gender') == $key ? ' checked="checked"' : '' ?> /><?= $value ?></label>
+        <?php endforeach; ?>
+    </span>
+
+    <span class="input-group-btn">
+        <button type="button" class="btn btn-success" id="serach_button">Serach</button>
+        <button type="button" class="btn btn-warning" id="reset_button">Reset</button>
+    </span>
+</div>
 
 <table id="staffs-table" class="table table-striped">
     <thead>
         <tr>
-            <th>Staff No</th>
-            <th>Name</th>
-            <th>Department</th>
-            <th>Gender</th>
+            <th><span class="sort" id="sort_staff_no">Staff No</span><input value="staff_no" type="hidden" /></th>
+            <th><span class="sort" id="sort_name">Name</span><input value="name" type="hidden" /></th>
+            <th><span class="sort" id="sort_department">Department</span><input value="department" type="hidden" /></th>
+            <th><span class="sort" id="sort_gender">Gender</span><input value="gender" type="hidden" /></th>
             <th>&nbsp</th>
         </tr>
     </thead>
@@ -42,6 +42,11 @@ foreach ($staffs as $staff) {
 ?>
     </tbody>
 </table>
+<input name="col" value="<?= e(Input::get('col') ? Input::get('col') : '') ?>" type="hidden" id="col" />
+<input name="key" value="<?= e(Input::get('key') ? Input::get('key') : '') ?>" type="hidden" id="key" />
+
+
+</form>
 
 <?php echo Pagination::instance('pagination')->render(); ?>
 

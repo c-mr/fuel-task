@@ -46,4 +46,4 @@
     </div>
 </div>
 
-<?php echo Asset::js('submit.js'); ?>
+<?php echo Asset::js('staff.js'); ?>
