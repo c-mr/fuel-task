@@ -8,6 +8,11 @@
             <tbody>
 
                 <tr class="something">
+                    <th class="col-sm-2">Hire Date</th>
+                    <td class="col-sm-6"><?= $staff['hire_date'] ? date("Y/m/d", strtotime($staff['hire_date'])) : '' ?></td>
+                </tr>
+
+                <tr class="something">
                     <th class="col-sm-2">Staff No</th>
                     <td class="col-sm-6"><?= sprintf('%07d', $staff['staff_no']) ?></td>
                 </tr>

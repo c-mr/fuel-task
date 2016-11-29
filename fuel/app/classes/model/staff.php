@@ -12,6 +12,9 @@ class Model_Staff
         // 追加validation呼出
         $val->add_callable('AddValidation');
 
+        $val->add('hire_date', 'Hire date')
+            ->add_rule('valid_date', 'Y/m/d');
+
         $val->add('staff_no', 'Staff No')
             ->add_rule('required')
             ->add_rule('unique', 'staffs.staff_no', $id)
@@ -171,8 +174,8 @@ class Model_Staff
     public static function staff_insert_query($val)
     {
         $sql = DB::query(
-            'INSERT INTO staffs (staff_no, name, department, gender, created_at)'
-            .' VALUES (:staff_no, :name, :department, :gender, now())'
+            'INSERT INTO staffs (staff_no, name, department, gender, hire_date,created_at)'
+            .' VALUES (:staff_no, :name, :department, :gender, :hire_date, now())'
         );
 
         // SQLインジェクション対策(bind)
@@ -180,6 +183,9 @@ class Model_Staff
         $sql->bind('name', $val['name']);
         $sql->bind('department', $val['department']);
         $sql->bind('gender', $val['gender']);
+
+        $val['hire_date'] = $val['hire_date'] == "" ? NULL : $val['hire_date'];
+        $sql->bind('hire_date', $val['hire_date']);
 
         return $sql->execute();
     }
@@ -198,6 +204,7 @@ class Model_Staff
             .' name = :name,'
             .' department = :department,'
             .' gender = :gender,'
+            .' hire_date = :hire_date,'
             .' updated_at = now()'
             .' WHERE id = :id'
         );
@@ -207,6 +214,9 @@ class Model_Staff
         $sql->bind('name', $val['name']);
         $sql->bind('department', $val['department']);
         $sql->bind('gender', $val['gender']);
+
+        $val['hire_date'] = $val['hire_date'] == "" ? NULL : $val['hire_date'];
+        $sql->bind('hire_date', $val['hire_date']);
         $sql->bind('id', $id);
 
         return $sql->execute();

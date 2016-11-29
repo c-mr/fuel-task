@@ -3,7 +3,7 @@
 class Controller_Staff extends Controller_Hybrid
 {
 
-    private $staffs = ['staff_no', 'name', 'department', 'gender'];
+    private $staffs = ['staff_no', 'name', 'department', 'gender', 'hire_date'];
 
     /**
      * INDEX画面(一覧)
@@ -47,7 +47,7 @@ class Controller_Staff extends Controller_Hybrid
      */
     public function action_add()
     {
-        // 共通化した部分(_form.php)に送るものはglobal
+        // 共通化した部分(_form.php)に送るものはglobalをつける
 
         $view = \View::forge('staff/add');
 
@@ -211,6 +211,7 @@ class Controller_Staff extends Controller_Hybrid
                 , 'name'          => Input::post('name')
                 , 'department'    => Input::post('department')
                 , 'gender'        => Input::post('gender')
+                , 'hire_date'     => Input::post('hire_date')
             ];
 
             // トランザクション
@@ -245,6 +246,7 @@ class Controller_Staff extends Controller_Hybrid
                 , 'name'          => Input::post('name')
                 , 'department'    => Input::post('department')
                 , 'gender'        => Input::post('gender')
+                , 'hire_date'     => Input::post('hire_date')
             ];
 
             // トランザクション

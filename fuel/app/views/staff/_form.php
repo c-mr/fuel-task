@@ -6,6 +6,18 @@
 
         <form id="form" class="form-horizontal" action="<?= Uri::current() ?>" accept-charset="utf-8" method="post" name="form">
 
+            <div class="form-group">
+                <div class="col-sm-2 col-sm-offset-2">
+                    <label class="control-label" for="form_hire_date">Hire date</label>
+                </div>
+                <div class="col-sm-6">
+                    <input class="form-control datepicker" placeholder="Hire date" name="hire_date" value="<?= e(Input::post('hire_date', isset($staff)) && $staff['hire_date'] ? date("Y/m/d", strtotime($staff['hire_date'])) : '') ?>" type="text" id="form_hire_date" />
+
+                    <?php if($val->error('hire_date')):?>
+                        <p class="alert alert-warning"><?= $val->error('hire_date'); ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
 
             <div class="form-group">
                 <div class="col-sm-2 col-sm-offset-2">
@@ -77,3 +89,6 @@
 </div>
 
 <?php echo Asset::js('staff.js'); ?>
+<?php echo Asset::js('bootstrap-datepicker.js'); ?>
+<?php echo Asset::js('setting_datepicker.js'); ?>
+<?php echo Asset::css('datepicker.css'); ?>
