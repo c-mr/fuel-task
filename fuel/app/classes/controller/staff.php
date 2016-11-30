@@ -5,6 +5,13 @@ class Controller_Staff extends Controller_Hybrid
 
     private $staffs = ['staff_no', 'name', 'department', 'gender', 'hire_date'];
 
+    private $icon_configuration = [
+        'randomize'        => true,
+        'ext_whitelist'    => ['img', 'jpg', 'jpeg', 'gif', 'png'],
+        'path'             => DOCROOT.'/assets/img/upload_icon/',
+        // 'max_size'         => 300*300,
+    ];
+
     /**
      * INDEX画面(一覧)
      */
@@ -57,35 +64,56 @@ class Controller_Staff extends Controller_Hybrid
         $view->set_global('department_arr', Config::get('staff_master.department'));
         $view->set_global('gender_arr', Config::get('staff_master.gender'));
 
-        if (Session::get_flash('action')) {
-            foreach ($this->staffs as $staff) {
-                // セッションからフラッシュ変数を取出
-                $staffs[$staff] = Session::get_flash($staff);
-            }
-            $view->set_global('staff', $staffs);
-        }
-
         // 入力チェック呼出
         $val = Model_Staff::validate('add');
-        $view->set_global('val', $val);
+        $upload_error = "";
 
-        // POSTされた各データをフラッシュセッションに保存
+
         if (Input::method() == 'POST') {
 
-            // セッションからフラッシュ変数を取出
             foreach ($this->staffs as $staff) {
-                Session::set_flash($staff, Input::post($staff));
+                $value_arr[$staff] = Input::post($staff);
+                $view->set_global($staff, Input::post($staff));
             }
 
             // confは新規と変更、共用なのでどちらかの判別fromのactionに渡す
-            Session::set_flash('action', 'insert');
+            $value_arr['action'] = 'insert';
+
+            if (is_uploaded_file($_FILES['icon_upload']['tmp_name'])) {
+
+                Upload::process($this->icon_configuration);
+
+
+                if (Upload::is_valid()) {
+                    Upload::save();
+
+                    $file = Upload::get_files(0);
+
+                    $icon = Model_Staff::staff_icon_add($file);
+
+                    $value_arr['icon_id'] = $icon['id'];
+                    $value_arr['icon_filename'] = $icon['filename'];
+                    $view->set_global('icon_filename', $icon['filename']);
+                }
+
+                foreach (Upload::get_errors() as $file) {
+                    $upload_error = $file['errors'][0]['message'];
+                }
+
+            }
+
+
 
             // 入力確認画面へ遷移
-            if ($val->run() && Security::check_token()) {
+            if ($val->run() && !$upload_error && Security::check_token()) {
+                Session::set('value_arr', $value_arr);
                 Response::redirect('staff/conf');
             }
 
         }
+
+        $view->set_global('val', $val);
+        $view->set_global('upload_error', $upload_error);
 
         $this->template->title = 'Staff &raquo; Add';
         $this->template->content = $view;
@@ -107,6 +135,10 @@ class Controller_Staff extends Controller_Hybrid
         $view->set('gender_arr', Config::get('staff_master.gender'));
 
         $view->set('staff', Model_Staff::staff_detail_query($id));
+        $icon = Model_Staff::staff_icon_call($id);
+        $view->set('icon_filename', $icon['filename']);
+
+
 
 
         $view->set('action', Session::get_flash('action'));
@@ -122,51 +154,71 @@ class Controller_Staff extends Controller_Hybrid
     public function action_edit($id = null)
     {
         // 共通化した部分(_form.php)に送るものはglobal
-
         $view = \View::forge('staff/edit');
 
         $view->set_global('title', "Staff Edit");
 
-        // 定義呼出
         Config::load('staff_master', true);
         $view->set_global('department_arr', Config::get('staff_master.department'));
         $view->set_global('gender_arr', Config::get('staff_master.gender'));
 
-
-        if (Session::get_flash('action')) {
-            foreach ($this->staffs as $staff) {
-                // セッションからフラッシュ変数を取出
-                $staffs[$staff] = Session::get_flash($staff);
-            }
-            $view->set_global('staff', $staffs);
-        }else{
-            $view->set_global('staff', Model_Staff::staff_detail_query($id));
-        }
-
         // 入力チェック呼出
         $val = Model_Staff::validate('edit', $id);
-        $view->set_global('val', $val);
-
+        $upload_error = "";
 
         // POSTされた各データをフラッシュセッションに保存
         if (Input::method() == 'POST') {
 
-            // セッションにフラッシュ変数をセット
             foreach ($this->staffs as $staff) {
-                Session::set_flash($staff, Input::post($staff));
+                $value_arr[$staff] = Input::post($staff);
+                $view->set_global($staff, Input::post($staff));
             }
 
             // confは新規と変更、共用なのでどちらかの判別fromのactionに渡す
-            Session::set_flash('action', 'update');
+            $value_arr['action'] = 'update';
 
-            Session::set('id', $id);
+            if (is_uploaded_file($_FILES['icon_upload']['tmp_name'])) {
+
+                Upload::process($this->icon_configuration);
+
+
+                if (Upload::is_valid()) {
+                    Upload::save();
+
+                    $file = Upload::get_files(0);
+
+                    $icon = Model_Staff::staff_icon_add($file);
+
+                    $value_arr['icon_id'] = $icon['id'];
+                    $value_arr['icon_filename'] = $icon['filename'];
+                    $view->set_global('icon_filename', $icon['filename']);
+                }
+
+                foreach (Upload::get_errors() as $file) {
+                    $upload_error = $file['errors'][0]['message'];
+                }
+
+            }
 
             // 入力確認画面へ遷移
-            if ($val->run() && Security::check_token()) {
+            if ($val->run() && !$upload_error && Security::check_token()) {
+                Session::set('value_arr', $value_arr);
+                Session::set('id', $id);
                 Response::redirect('staff/conf');
             }
 
+        }else{
+            $staffs_detail = Model_Staff::staff_detail_query($id);
+            Debug::dump($staffs_detail);
+            foreach ($this->staffs as $staff) {
+                $view->set_global($staff, $staffs_detail[$staff]);
+            }
+            $icon = Model_Staff::staff_icon_call($id);
+            $view->set_global('icon_filename', $icon['filename']);
         }
+
+        $view->set_global('val', $val);
+        $view->set_global('upload_error', $upload_error);
 
         $this->template->title = 'Staff &raquo; Edit';
         $this->template->content = $view;
@@ -181,19 +233,17 @@ class Controller_Staff extends Controller_Hybrid
 
         $view->set('title', "Staff Conf");
 
+
         // 定義呼出
         Config::load('staff_master', true);
         $view->set('department_arr', Config::get('staff_master.department'));
         $view->set('gender_arr', Config::get('staff_master.gender'));
 
-        foreach ($this->staffs as $staff) {
-            // セッションからフラッシュ変数を取出
-           $view->set($staff, Session::get_flash($staff));
-            // セッション変数を次のリクエストを維持
-            Session::keep_flash($staff);
+        $value_arr = Session::get('value_arr');
+        foreach ($value_arr as $key => $val) {
+           $view->set($key, $val);
         }
-
-        $view->set('action', Session::get_flash('action'));
+        Session::delete('value_arr');
 
         $this->template->title = 'Staff &raquo; Conf';
         $this->template->content = $view;
@@ -218,7 +268,8 @@ class Controller_Staff extends Controller_Hybrid
             try {
                 DB::start_transaction();
 
-                Model_Staff::staff_insert_query($val);
+                $staff_id = Model_Staff::staff_insert_query($val);
+                Model_Staff::staff_icon_link($staff_id, Input::post('icon_id'));
 
                 DB::commit_transaction();
 
@@ -252,6 +303,10 @@ class Controller_Staff extends Controller_Hybrid
             // トランザクション
             try {
                 DB::start_transaction();
+
+                if (Input::post('icon_id')!="") {
+                    Model_Staff::staff_icon_link($id, Input::post('icon_id'));
+                }
 
                 Model_Staff::staff_update_query($id, $val);
 

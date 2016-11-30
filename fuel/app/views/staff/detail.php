@@ -32,6 +32,15 @@
                     <td class="col-sm-6"><?= $gender_arr[$staff['gender']] ?></td>
                 </tr>
 
+                <tr class="something">
+                    <th class="col-sm-2">Icon</th>
+                    <td class="col-sm-6">
+                    <?php if( !empty($icon_filename) ):?>
+                        <?= Asset::img('upload_icon/'.$icon_filename, [ 'higth' => '150px', 'width' => '150px']) ?>
+                    <?php endif; ?>
+                    </td>
+                </tr>
+
             </tbody>
         </table>
 

@@ -37,7 +37,7 @@
                     <label class="control-label" for="form_department">Department</label>
                 </div>
                 <div class="col-sm-6">
-                    <?= $department_arr[$department]; ?><input name="department" value="<?= $department ?>" type="hidden" id="form_department" />
+                    <?= $department_arr[$department] ?><input name="department" value="<?= $department ?>" type="hidden" id="form_department" />
                 </div>
             </div>
 
@@ -46,11 +46,23 @@
                     <label class="control-label" for="form_gender">Gender</label>
                 </div>
                 <div class="col-sm-6">
-                    <?= $gender_arr[$gender]; ?><input name="gender" value="<?= $gender ?>" type="hidden" id="form_gender" />
+                    <?= $gender_arr[$gender] ?><input name="gender" value="<?= $gender ?>" type="hidden" id="form_gender" />
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-2 col-sm-offset-2">
+                    <label class="control-label" for="form_gender">Icon</label>
+                </div>
+                <div class="col-sm-6">
+                    <?php if( !empty($icon_filename) ):?>
+                        <?= Asset::img('upload_icon/'.$icon_filename, [ 'higth' => '150px', 'width' => '150px']) ?>
+                    <?php endif; ?>
                 </div>
             </div>
 
             <input name="fuel_csrf_token" value="<?= Security::fetch_token() ?>" type="hidden" id="form_fuel_csrf_token" />
+            <input name="icon_id" value="<?= !empty($icon_id) ? $icon_id : '' ?>" type="hidden" id="icon_id" />
 
             <div class="form-group">
                 <div class="col-sm-offset-3 col-sm-1">

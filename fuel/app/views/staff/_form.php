@@ -4,14 +4,14 @@
     </div>
     <div class="panel-body">
 
-        <form id="form" class="form-horizontal" action="<?= Uri::current() ?>" accept-charset="utf-8" method="post" name="form">
+        <form id="form" class="form-horizontal" action="<?= Uri::current() ?>" accept-charset="utf-8" enctype="multipart/form-data" method="post" name="form">
 
             <div class="form-group">
                 <div class="col-sm-2 col-sm-offset-2">
                     <label class="control-label" for="form_hire_date">Hire date</label>
                 </div>
                 <div class="col-sm-6">
-                    <input class="form-control datepicker" placeholder="Hire date" name="hire_date" value="<?= e(Input::post('hire_date', isset($staff)) && $staff['hire_date'] ? date("Y/m/d", strtotime($staff['hire_date'])) : '') ?>" type="text" id="form_hire_date" />
+                    <input class="form-control datepicker" placeholder="Hire date" name="hire_date" value="<?= e(Input::post('hire_date', isset($hire_date)) && $hire_date ? date("Y/m/d", strtotime($hire_date)) : '') ?>" type="text" id="form_hire_date" />
 
                     <?php if($val->error('hire_date')):?>
                         <p class="alert alert-warning"><?= $val->error('hire_date'); ?></p>
@@ -24,7 +24,7 @@
                     <label class="control-label" for="form_staff_no">Staff No</label>
                 </div>
                 <div class="col-sm-6">
-                    <input class="form-control" placeholder="Staff No" name="staff_no" value="<?= e(Input::post('staff_no', isset($staff)) ? sprintf('%07d', $staff['staff_no']) : '') ?>" type="text" id="form_staff_no" />
+                    <input class="form-control" placeholder="Staff No" name="staff_no" value="<?= e(Input::post('staff_no', isset($staff_no)) ? sprintf('%07d', $staff_no) : '') ?>" type="text" id="form_staff_no" />
                     <?php if($val->error('staff_no')):?>
                         <p class="alert alert-warning"><?= $val->error('staff_no'); ?></p>
                     <?php endif; ?>
@@ -36,7 +36,7 @@
                     <label class="control-label" for="form_name">Name</label>
                 </div>
                 <div class="col-sm-6">
-                    <input class="form-control" placeholder="Name" name="name" value="<?= e(Input::post('name', isset($staff)) ? $staff['name'] : '') ?>" type="text" id="form_name" />
+                    <input class="form-control" placeholder="Name" name="name" value="<?= e(Input::post('name', isset($name)) ? $name : '') ?>" type="text" id="form_name" />
                     <?php if($val->error('name')):?>
                         <p class="alert alert-warning"><?= $val->error('name'); ?></p>
                     <?php endif; ?>
@@ -51,7 +51,7 @@
                     <select class="form-control" name="department" id="form_department">
                         <option value="">Select</option>
                         <?php foreach ($department_arr as $key => $value):?>
-                        <option value="<?= $key ?>"<?= (Input::post('department', isset($staff) ? $staff['department'] : '')) == $key ? ' selected="selected"' : '' ?>><?= $value ?></option>
+                        <option value="<?= $key ?>"<?= (Input::post('department', isset($department) ? $department : '')) == $key ? ' selected="selected"' : '' ?>><?= $value ?></option>
                         <?php endforeach; ?>
                     </select>
                     <?php if($val->error('department')):?>
@@ -67,11 +67,27 @@
                 <div class="col-sm-6">
                     <?php foreach ($gender_arr as $key => $value):?>
                     <label class="radio-inline" for="form_gender_<?= $key ?>">
-                        <?= $value ?><input id="form_gender_<?= $key ?>" name="gender" value="<?= $key ?>" type="radio"<?= (Input::post('gender', isset($staff) ? $staff['gender'] : '')) == $key ? ' checked="checked"' : '' ?> />
+                        <?= $value ?><input id="form_gender_<?= $key ?>" name="gender" value="<?= $key ?>" type="radio"<?= (Input::post('gender', isset($gender) ? $gender : '')) == $key ? ' checked="checked"' : '' ?> />
                     </label>
                     <?php endforeach; ?>
                     <?php if($val->error('gender')):?>
                         <p class="alert alert-warning"><?= $val->error('gender'); ?></p>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-2 col-sm-offset-2">
+                    <label class="control-label" for="form_gender">Icon</label>
+                </div>
+                <div class="col-sm-6">
+                    <input type="file" name="icon_upload" />
+                    <?php if(!empty($upload_error)):?>
+                        <p class="alert alert-warning"><?= $upload_error ?></p>
+                    <?php endif; ?>
+
+                    <?php if( !empty($icon_filename) ):?>
+                        <?= Asset::img('upload_icon/'.$icon_filename, [ 'higth' => '150px', 'width' => '150px']) ?>
                     <?php endif; ?>
                 </div>
             </div>

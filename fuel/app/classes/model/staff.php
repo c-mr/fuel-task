@@ -106,6 +106,7 @@ class Model_Staff
         $sql = DB::query(
             'SELECT count(*) AS count FROM staffs'.
             ' WHERE deleted_at IS NULL'.$where
+            , DB::SELECT
         );
 
 
@@ -142,6 +143,7 @@ class Model_Staff
             . $order_by
             .' LIMIT :limit'
             .' OFFSET :offset'
+            , DB::SELECT
         );
 
         // SQLインジェクション対策（複数の値をbindする時はparametersでも可)
@@ -157,7 +159,10 @@ class Model_Staff
      */
     public static function staff_detail_query($id)
     {
-        $sql = DB::query('SELECT * FROM staffs WHERE id = :id');
+        $sql = DB::query(
+            'SELECT * FROM staffs WHERE id = :id'
+            , DB::SELECT
+        );
 
         // SQLインジェクション対策(bind)
         $sql->bind('id', $id);
@@ -176,6 +181,7 @@ class Model_Staff
         $sql = DB::query(
             'INSERT INTO staffs (staff_no, name, department, gender, hire_date,created_at)'
             .' VALUES (:staff_no, :name, :department, :gender, :hire_date, now())'
+            , DB::INSERT
         );
 
         // SQLインジェクション対策(bind)
@@ -187,14 +193,15 @@ class Model_Staff
         $val['hire_date'] = $val['hire_date'] == "" ? NULL : $val['hire_date'];
         $sql->bind('hire_date', $val['hire_date']);
 
-        return $sql->execute();
+        $query = $sql->execute();
+
+        return $query[0];
     }
 
     /**
      * 更新SQL
      * @param  [Int]    $id  [SerialID]
      * @param  [Array]  $val [保存するデータ]
-     * @return [Object]      [SQL結果]
      */
     public static function staff_update_query($id, $val)
     {
@@ -207,6 +214,7 @@ class Model_Staff
             .' hire_date = :hire_date,'
             .' updated_at = now()'
             .' WHERE id = :id'
+            , DB::UPDATE
         );
 
         // SQLインジェクション対策(bind)
@@ -219,28 +227,104 @@ class Model_Staff
         $sql->bind('hire_date', $val['hire_date']);
         $sql->bind('id', $id);
 
-        return $sql->execute();
+        $sql->execute();
     }
 
     /**
      * 削除SQL(論理削除)
      * @param  [Int]    $id  [SerialID]
      * @param  [Array]  $val [保存するデータ]
-     * @return [Object]      [SQL結果]
      */
     public static function staff_delete_query($id)
     {
         $sql = DB::query(
             'UPDATE staffs SET updated_at = now(), deleted_at = now() WHERE id = :id'
+            , DB::UPDATE
         );
 
         // SQLインジェクション対策(bind)
         $sql->bind('id', $id);
 
-        // SqlLog
-        Log::write('ERROR', $sql);
 
-        return $sql->execute();
+        $sql->execute();
+    }
+
+    /**
+     * 画像保存
+     */
+    public static function staff_icon_add($file)
+    {
+        $sql = DB::query(
+            'INSERT INTO icon (filename, created_at)'
+            .' VALUES (:filename, now())'
+            , DB::INSERT
+        );
+
+        // SQLインジェクション対策(bind)
+        $sql->bind('filename', $file['saved_as']);
+
+
+        $query = $sql->execute();
+
+        // 追加したiconのidを返す
+        return Self::staff_icon_call($query[0]);
+    }
+
+    /**
+     * 画像とスタッフとヒモ付
+     */
+    public static function staff_icon_link($staff_id, $icon_id)
+    {
+        // 前のレコードがあれば削除
+        $sql1 = DB::query(
+            'DELETE FROM icon WHERE staff_id = :staff_id'
+            , DB::DELETE
+        );
+        $sql1->bind('staff_id', $staff_id);
+        $sql1->execute();
+
+        // 新しいiconにスタッフIDをいれる
+        $sql2 = DB::query(
+            'UPDATE icon SET staff_id = :staff_id WHERE id = :icon_id'
+            , DB::UPDATE
+        );
+        $sql2->bind('staff_id', $staff_id);
+        $sql2->bind('icon_id', $icon_id);
+        $sql2->execute();
+
+        // ゴミレコード削除。staff_idがなく、登録から1日以上
+        $del_date = date('Y/m/d H:i:s', strtotime('-1 day'));
+        $sql3 = DB::query(
+            'DELETE FROM icon WHERE staff_id IS NULL AND created_at < \''.$del_date.'\''
+            , DB::DELETE
+        )->execute();
+    }
+
+
+    /**
+     * 画像呼出
+     */
+    public static function staff_icon_call($id)
+    {
+
+        $sql = DB::query(
+            'SELECT * FROM icon WHERE staff_id = :staff_id'
+            , DB::SELECT
+        );
+        $sql->bind('staff_id', $id);
+        $result = $sql->execute();
+
+        // staff_idで検索した結果が無ければシリアルIDで検索
+        if (count($result) == 0) {
+            $sql = DB::query(
+                'SELECT * FROM icon WHERE id = :id'
+                , DB::SELECT
+            );
+
+            $sql->bind('id', $id);
+        }
+
+        return $sql->execute()->current();
     }
 
 }

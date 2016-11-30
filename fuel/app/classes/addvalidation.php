@@ -17,6 +17,7 @@ class AddValidation
                 .' WHERE '.$field.' = :val AND'
                 .' id <> :id'
                 .' AND deleted_at IS NULL'
+                , DB::SELECT
             );
             $sql->bind('id', $id);
         }else{
@@ -24,6 +25,7 @@ class AddValidation
                 'SELECT LOWER('.$field.') FROM '.$table
                 .' WHERE '.$field.' = :val'
                 .' AND deleted_at IS NULL'
+                , DB::SELECT
             );
         }
 
